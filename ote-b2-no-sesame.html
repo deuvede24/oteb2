@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>OTE B2 Practice 🎯</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f0e8;--card:#fffdf8;--border:#e0dbd0;--txt:#1a1610;--muted:#8a8070;
+      --green:#2a5c24;--orange:#c8440a;--blue:#1a3a8f;--purple:#6b35a0;
+      --r:16px;--shadow:0 3px 20px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
+    .page{min-height:100svh;padding:16px 14px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:500px;margin:0 auto;}
+    .hdr{width:100%;display:flex;align-items:center;justify-content:space-between;}
+    .hdr-title{font-family:'Fraunces',serif;font-size:21px;font-weight:900;letter-spacing:-.3px;}
+    .hdr-title span{color:var(--green);}
+    .level-badge{font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--green);color:#fff;letter-spacing:.5px;}
+    .mod-tabs{width:100%;display:flex;gap:5px;}
+    .mod-tab{flex:1;padding:9px 3px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;text-align:center;color:var(--muted);transition:all .2s;touch-action:manipulation;letter-spacing:.2px;}
+    .mod-tab .t-icon{font-size:18px;display:block;margin-bottom:2px;}
+    .mod-tab.active{border-color:var(--green);background:var(--green);color:#fff;}
+    .part-tabs{width:100%;display:flex;gap:5px;flex-wrap:wrap;}
+    .part-tab{flex:1;min-width:58px;padding:8px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-align:center;color:var(--muted);transition:all .18s;touch-action:manipulation;}
+    .part-tab .pt-num{font-family:'Fraunces',serif;font-size:17px;font-weight:900;display:block;color:var(--txt);}
+    .part-tab.active .pt-num{color:#fff;}
+    .part-tab.active{color:#fff;}
+    .card{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+    .card-hdr{padding:13px 15px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+    .part-tag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:#fff;}
+    .card-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;flex:1;line-height:1.2;}
+    .q-count{font-size:11px;color:var(--muted);}
+    .prog-bar{height:3px;background:var(--border);}
+    .prog-fill{height:100%;transition:width .4s ease;}
+    .timer-wrap{padding:14px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);}
+    .timer-ring{position:relative;width:72px;height:72px;flex-shrink:0;}
+    .timer-ring svg{transform:rotate(-90deg);}
+    .timer-ring circle{fill:none;stroke-linecap:round;}
+    .t-bg{stroke:#e5e0d8;}
+    .t-fg{stroke:var(--green);transition:stroke-dashoffset .9s linear,stroke .3s;}
+    .t-fg.warn{stroke:var(--orange);}
+    .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;font-weight:900;}
+    .timer-num.warn{color:var(--orange);}
+    .timer-info{flex:1;}
+    .timer-label{font-size:12px;color:var(--muted);margin-bottom:3px;}
+    .timer-tip{font-size:11px;color:var(--muted);line-height:1.4;}
+    .card-body{padding:14px 15px;display:grid;gap:11px;}
+    .task-tag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);}
+    .task-q{font-size:14.5px;line-height:1.55;}
+    .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .photo-item{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:2.5px solid transparent;cursor:pointer;transition:border-color .18s,transform .12s;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+    .photo-item:active{transform:scale(.96);}
+    .photo-item .ph-emoji{font-size:40px;line-height:1;}
+    .photo-item .ph-desc{font-size:10px;color:var(--muted);text-align:center;padding:0 6px;line-height:1.3;}
+    .photo-item .ph-lbl{font-size:11px;font-weight:700;color:var(--txt);text-align:center;padding:0 6px;}
+    .photo-item.sel{border-color:var(--green);background:#eef4ee;box-shadow:0 0 0 3px rgba(42,92,36,.18);}
+    .tick{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:999px;background:var(--green);color:#fff;font-size:11px;display:none;align-items:center;justify-content:center;font-weight:700;}
+    .photo-item.sel .tick{display:flex;}
+    .sel-hint{font-size:12px;color:var(--muted);text-align:center;}
+    .sel-info{font-size:12px;font-weight:600;text-align:center;min-height:18px;color:var(--green);}
+    .vm-box{background:#f5f0e6;border-radius:11px;padding:11px 13px;}
+    .vm-from{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:5px;}
+    .vm-text{font-size:13px;line-height:1.6;}
+    .vm-bullets{margin-top:7px;display:grid;gap:4px;}
+    .vm-b{font-size:12.5px;display:flex;gap:7px;}
+    .vm-b::before{content:"•";flex-shrink:0;margin-top:1px;}
+    .int-topic{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);text-align:center;}
+    .int-q{font-family:'Fraunces',serif;font-size:17px;font-weight:600;line-height:1.4;text-align:center;padding:4px 0;}
+    .fup-box{border-radius:10px;padding:11px 13px;font-size:14px;line-height:1.55;border-left:3px solid var(--blue);}
+    .fup-meta{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:5px;}
+    .reading-text{background:#f5f0e6;border-radius:11px;padding:12px 14px;font-size:13px;line-height:1.7;border-left:3px solid var(--orange);}
+    .reading-text mark{background:rgba(200,68,10,.12);border-radius:3px;padding:0 2px;font-weight:600;color:var(--orange);}
+    .choices{display:grid;gap:7px;}
+    .choice{padding:10px 13px;border-radius:9px;border:1.5px solid var(--border);background:#f8f6f0;cursor:pointer;font-size:13.5px;line-height:1.4;text-align:left;color:var(--txt);font-family:'Outfit',sans-serif;transition:background .15s,border-color .15s;touch-action:manipulation;}
+    .choice:active{background:#ede8de;}
+    .choice.correct{background:rgba(42,92,36,.1);border-color:var(--green);color:var(--green);}
+    .choice.wrong{background:rgba(200,68,10,.08);border-color:var(--orange);color:var(--orange);}
+    .choice.reveal{background:rgba(42,92,36,.06);border-color:rgba(42,92,36,.3);color:var(--green);}
+    .ans-box{background:#f5f0e6;border-radius:10px;padding:11px 13px;display:none;}
+    .ans-box.show{display:block;}
+    .ans-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+    .ans-text{font-size:13px;color:var(--green);font-weight:600;line-height:1.5;}
+    .ans-exp{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;}
+    .fill-input{width:100%;background:#f8f6f0;border:1.5px solid var(--border);color:var(--txt);font-family:'Outfit',sans-serif;font-size:14px;padding:10px 12px;border-radius:10px;outline:none;transition:border-color .2s;}
+    .fill-input:focus{border-color:var(--green);}
+    .prompt-box{background:#f0ede6;border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:11px 13px;font-size:13px;line-height:1.6;}
+    .model-box{background:#f5f0e6;border-radius:10px;padding:11px 13px;display:none;}
+    .model-box.show{display:block;}
+    .model-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+    .model-text{font-size:13px;line-height:1.65;white-space:pre-line;}
+    .tip-box{background:#eef4ee;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--green);line-height:1.5;border:1px solid #c5dcc5;}
+    .score-strip{width:100%;display:flex;gap:7px;}
+    .score-box{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:9px 10px;text-align:center;}
+    .score-val{font-family:'Fraunces',serif;font-size:20px;font-weight:900;}
+    .score-lbl{font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-top:1px;}
+    .sc-correct .score-val{color:var(--green);}
+    .sc-wrong .score-val{color:var(--orange);}
+    .starters-card{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);}
+    .starters-inner{padding:12px 14px;}
+    .starters-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+    .chips{display:flex;flex-wrap:wrap;gap:5px;}
+    .chip{font-size:11.5px;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--border);color:var(--txt);font-weight:500;line-height:1.3;}
+    .card-foot{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:7px;flex-wrap:wrap;}
+    .btn{flex:1;border:none;border-radius:10px;padding:12px 12px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;touch-action:manipulation;transition:transform .1s,background .15s;}
+    .btn:active{transform:translateY(1px);}
+    .btn-go{color:#fff;}
+    .btn-stop{background:var(--orange);color:#fff;}
+    .btn-next{background:var(--border);color:var(--txt);}
+    .btn-reveal{color:#fff;}
+    .btn-check{color:#fff;}
+    .btn-y{background:var(--green);color:#fff;}
+    .btn-n{background:var(--border);color:var(--txt);}
+    .pg-footer{font-size:11px;color:var(--muted);text-align:center;}
+
+    /* ── PLAYPHRASE ── */
+    .pp-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:7px 13px;border-radius:10px;background:#1c1814;color:#c8f060;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif;text-decoration:none;letter-spacing:.2px;border:1.5px solid #3a3820;}
+    .pp-link em{font-style:normal;color:#fff;}
+    .pp-link:hover{background:#2a2410;}
+
+    /* ── LISTENING ── */
+    .audio-wrap{background:#1c1814;border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;}
+    .audio-title{color:#c0b8a8;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+    .audio-row{display:flex;align-items:center;gap:10px;}
+    .play-btn{width:42px;height:42px;border-radius:50%;background:var(--green);border:none;cursor:pointer;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;}
+    .audio-mid{flex:1;display:flex;flex-direction:column;gap:5px;}
+    .audio-bar{height:3px;background:#3a3020;border-radius:2px;overflow:hidden;}
+    .audio-prog{height:100%;background:var(--green);width:0%;transition:width .25s linear;}
+    .audio-status{font-size:11.5px;color:#7a7060;}
+    .audio-hint{font-size:10px;color:#4a4030;text-align:center;}
+    .transcript-box{background:#f5f0e6;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;border-left:3px solid var(--blue);display:none;color:#3a3020;font-style:italic;}
+    .tr-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11.5px;color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif;align-self:flex-start;touch-action:manipulation;}
+    /* gap fill */
+    .gap-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;font-size:14px;line-height:1.9;background:#f8f6f0;border-radius:9px;padding:8px 12px;border:1.5px solid var(--border);}
+    .gap-in{border:none;border-bottom:2px solid var(--border);background:transparent;font-family:'Outfit',sans-serif;font-size:13.5px;width:100px;text-align:center;padding:1px 4px;outline:none;}
+    .gap-in:focus{border-bottom-color:var(--blue);}
+    .gap-in.ok{border-bottom-color:var(--green);color:var(--green);}
+    .gap-in.err{border-bottom-color:var(--orange);color:var(--orange);}
+    /* T/F/NM */
+    .tf-item{background:#f5f0e6;border-radius:10px;padding:11px 13px;border-left:3px solid var(--border);transition:border-left-color .2s;}
+    .tf-item.good{border-left-color:var(--green);background:rgba(42,92,36,.05);}
+    .tf-item.bad{border-left-color:var(--orange);background:rgba(200,68,10,.05);}
+    .tf-stmt{font-size:13.5px;line-height:1.5;margin-bottom:8px;}
+    .tf-btns{display:flex;gap:5px;}
+    .tf-btn{flex:1;padding:7px 3px;font-size:11px;font-weight:700;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;background:var(--card);color:var(--txt);font-family:'Outfit',sans-serif;}
+    .tf-btn.t-style{border-color:var(--green);color:var(--green);}
+    .tf-btn.f-style{border-color:var(--orange);color:var(--orange);}
+    .tf-btn.nm-style{border-color:var(--blue);color:var(--blue);}
+    .tf-btn:disabled{opacity:.45;cursor:default;}
+    .tf-exp{font-size:12px;color:var(--muted);margin-top:6px;display:none;line-height:1.5;}
+    .tf-exp.show{display:block;}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-title">OTE <span>B2</span> Practice 🎯</div>
+    <div class="level-badge">B2</div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-box sc-correct"><div class="score-val" id="sC">0</div><div class="score-lbl">Correct</div></div>
+    <div class="score-box sc-wrong"><div class="score-val" id="sW">0</div><div class="score-lbl">Wrong</div></div>
+    <div class="score-box"><div class="score-val" id="sT">0</div><div class="score-lbl">Done</div></div>
+  </div>
+
+  <div class="mod-tabs">
+    <button class="mod-tab active" onclick="selectModule(0)"><span class="t-icon">🎙️</span>Speaking</button>
+    <button class="mod-tab" onclick="selectModule(1)"><span class="t-icon">📖</span>Reading</button>
+    <button class="mod-tab" onclick="selectModule(2)"><span class="t-icon">✍️</span>Writing</button>
+    <button class="mod-tab" onclick="selectModule(3)"><span class="t-icon">🎧</span>Listening</button>
+  </div>
+
+  <div class="part-tabs" id="partTabs"></div>
+
+  <div class="card" id="mainCard">
+    <div class="card-hdr">
+      <div class="part-tag" id="partTag">Part 1</div>
+      <div class="card-title" id="cardTitle">—</div>
+      <div class="q-count" id="qCount">1/8</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="timer-wrap" id="timerWrap" style="display:none">
+      <div class="timer-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle class="t-bg" cx="36" cy="36" r="30" stroke-width="5"/>
+          <circle class="t-fg" id="tCircle" cx="36" cy="36" r="30" stroke-width="5" stroke-dasharray="188.5" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-num" id="tNum">30</div>
+      </div>
+      <div class="timer-info">
+        <div class="timer-label" id="tLabel">seconds</div>
+        <div class="timer-tip" id="tTip"></div>
+      </div>
+    </div>
+    <div class="card-body" id="cardBody"></div>
+    <div class="card-foot" id="cardFoot"></div>
+  </div>
+
+  <div class="starters-card" id="startersCard" style="display:none">
+    <div class="starters-inner">
+      <div class="starters-lbl" id="startersLbl">💬 Useful phrases</div>
+      <div class="chips" id="starterChips"></div>
+    </div>
+  </div>
+
+  <!-- QUICK PART NAV -->
+  <div id="quickNav" style="width:100%;display:none;flex-direction:column;gap:6px">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);padding:0 2px">⚡ Jump to part</div>
+    <div id="quickNavBtns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
+
+  <div class="pg-footer">OTE B2 Practice · Made with care 💚</div>
+</div>
+
+<script>
+// ── SCORE ──
+let score={c:0,w:0,t:0};
+const updScore=()=>{
+  document.getElementById('sC').textContent=score.c;
+  document.getElementById('sW').textContent=score.w;
+  document.getElementById('sT').textContent=score.t;
+};
+
+// ── TIMER ──
+const CIRC=188.5;
+let tInterval=null,tSec=0,tMax=1;
+const tEl=()=>({wrap:document.getElementById('timerWrap'),circle:document.getElementById('tCircle'),num:document.getElementById('tNum'),label:document.getElementById('tLabel'),tip:document.getElementById('tTip')});
+function showTimer(sec,label,tip=''){const e=tEl();e.wrap.style.display='flex';tMax=sec;tSec=sec;e.num.textContent=sec;e.num.className='timer-num';e.circle.className='t-fg';e.circle.style.strokeDashoffset=0;e.label.textContent=label;e.tip.textContent=tip;}
+function startTimer(sec,label,onEnd,tip=''){stopTimer();showTimer(sec,label,tip);tSec=sec;tInterval=setInterval(()=>{tSec--;const e=tEl();if(!e.num)return;e.num.textContent=tSec;e.circle.style.strokeDashoffset=CIRC*(1-tSec/tMax);const w=tSec<=5;e.circle.className='t-fg'+(w?' warn':'');e.num.className='timer-num'+(w?' warn':'');if(tSec<=0){stopTimer();if(onEnd)onEnd();}},1000);}
+function stopTimer(){clearInterval(tInterval);tInterval=null;}
+
+// ── LISTENING AUDIO ──
+const _at={};
+let _progTimer=null;
+function audioPlayer(title,text,id){
+  _at[id]=text;
+  return `<div class="audio-wrap">
+    <div class="audio-title">🎧 ${title}</div>
+    <div class="audio-row">
+      <button class="play-btn" id="${id}-btn" onclick="toggleAudio('${id}')">▶</button>
+      <div class="audio-mid">
+        <div class="audio-bar"><div class="audio-prog" id="${id}-prog"></div></div>
+        <div class="audio-status" id="${id}-st">Press ▶ to listen</div>
+      </div>
+    </div>
+    <div class="audio-hint">🇬🇧 British English · tap ▶ again to stop · you can listen more than once</div>
+  </div>`;
+}
+function toggleAudio(id){
+  if(window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();clearInterval(_progTimer);
+    const b=document.getElementById(id+'-btn'),s=document.getElementById(id+'-st');
+    if(b)b.textContent='▶';if(s)s.textContent='Stopped — press ▶ to listen again';
+    return;
+  }
+  const text=_at[id];if(!text)return;
+  const btn=document.getElementById(id+'-btn'),st=document.getElementById(id+'-st'),pg=document.getElementById(id+'-prog');
+  if(btn)btn.textContent='⏹';if(st)st.textContent='Loading...';
+
+  function doSpeak(){
+    const utt=new SpeechSynthesisUtterance(text);
+    utt.lang='en-GB';utt.rate=0.84;utt.pitch=1.0;
+    const voices=window.speechSynthesis.getVoices();
+    const v=voices.find(v=>v.lang==='en-GB')||voices.find(v=>v.lang.startsWith('en-'))||voices[0]||null;
+    if(v)utt.voice=v;
+    if(st)st.textContent='Playing...';
+    const words=text.split(' ').length,estSec=words/2.2;
+    let el=0;clearInterval(_progTimer);
+    _progTimer=setInterval(()=>{el+=0.25;if(pg)pg.style.width=Math.min(97,(el/estSec)*100)+'%';},250);
+    utt.onend=()=>{clearInterval(_progTimer);if(btn)btn.textContent='▶';if(st)st.textContent='✓ Done — now answer below';if(pg)pg.style.width='100%';};
+    utt.onerror=(e)=>{
+      clearInterval(_progTimer);if(btn)btn.textContent='▶';
+      if(e&&(e.error==='interrupted'||e.error==='canceled')){if(st)st.textContent='Stopped';return;}
+      if(st)st.textContent='⚠️ No audio — read the transcript below';
+      const tr=document.getElementById('tr-'+id);if(tr)tr.style.display='block';
+    };
+    window.speechSynthesis.speak(utt);
+  }
+
+  const voices=window.speechSynthesis.getVoices();
+  if(voices&&voices.length>0){doSpeak();}
+  else{
+    window.speechSynthesis.onvoiceschanged=()=>{window.speechSynthesis.onvoiceschanged=null;doSpeak();};
+    setTimeout(doSpeak,400); // fallback if event never fires
+  }
+}
+function showTr(id){const el=document.getElementById('tr-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
+
+// ── DATA: LISTENING ──
+const LD_PARTS=[
+  {name:"Multiple Choice",color:"#1a3a8f",type:"ld_mc",
+   starters:["Listen for the KEY words in the question","Focus on what is specifically said, not assumed","Beware of options that are 'almost right'","Listen again if unsure — it's allowed"],
+   questions:[
+    {title:"Extract 1 · Career Change",
+     text:"I've been thinking about changing career for a while now. I work as an accountant, and while the pay is decent, I honestly find the work quite repetitive. My sister keeps suggesting I try teaching, but I'm not sure I have the patience for it. What I'd really love is something creative — maybe graphic design or photography. I've actually started doing an online course in the evenings, so we'll see how it goes.",
+     q:"What does the speaker want to do in the future?",opts:["Become a teacher","Do something creative","Go back to full-time study"],a:1,exp:"She says she would 'really love something creative — maybe graphic design or photography'."},
+    {title:"Extract 2 · Sports Centre",
+     text:"Good afternoon. This is a message for all members of Riverside Sports Centre. Please note that the swimming pool will be closed for maintenance this Thursday and Friday. The gym and tennis courts will remain open as normal. We apologise for any inconvenience and hope to see you back in the pool by the weekend. If you have any questions, please call us during opening hours.",
+     q:"What facility is closed?",opts:["The gym","The tennis courts","The swimming pool"],a:2,exp:"The message clearly states 'the swimming pool will be closed for maintenance'."},
+    {title:"Extract 3 · Concert Tickets",
+     text:"A: Did you manage to book the tickets for Saturday's concert? B: I tried, but by the time I got online, the standing tickets had already sold out. I managed to get two seated ones instead — they cost a bit more, but at least we'll have a proper view. A: Oh, that's fine! Actually, I prefer seated anyway — my feet were killing me at the last one.",
+     q:"What type of tickets did they get?",opts:["Standing tickets","No tickets at all","Seated tickets"],a:2,exp:"Speaker B says 'I managed to get two seated ones instead'."},
+    {title:"Extract 4 · Environment Report",
+     text:"The latest report from the Environmental Research Institute suggests that urban tree-planting initiatives are having a measurable impact on air quality in several major cities. However, experts warn that planting trees alone is insufficient without broader policy changes targeting vehicle emissions and industrial pollution. The report calls for a combination of green infrastructure and stricter environmental regulations.",
+     q:"What does the report say about tree planting?",opts:["It is enough to solve pollution","It has no proven effect","It helps but must be combined with other measures"],a:2,exp:"The report says trees 'have an impact' BUT calls for 'a combination' with stricter regulations — so not enough alone."},
+    {title:"Extract 5 · Language Course",
+     text:"A: I'm thinking of doing a language course this summer. There's one in Barcelona that looks great. B: Oh nice! How long is it? A: Three weeks. The only problem is it's quite expensive — about eight hundred pounds including accommodation. B: That is a lot. Have you looked into whether your company might fund part of it? Some employers contribute if it's relevant to your job. A: That's actually a really good idea. I hadn't thought of that.",
+     q:"What does the man suggest the woman should do?",opts:["Find a cheaper course","Ask her employer for financial support","Do the course online instead"],a:1,exp:"The man asks 'have you looked into whether your company might fund part of it?' — he's suggesting she ask her employer."},
+    {title:"Extract 6 · Museum",
+     text:"Welcome to the City Museum's new temporary exhibition: Connections — A History of Communication. The exhibition runs until the end of March and explores how communication has evolved from ancient writing systems to the digital age. Entry is free for museum members and children under twelve. Adults without membership pay eight pounds. Guided tours run every Saturday at eleven and two and must be booked in advance.",
+     q:"How much do adult non-members pay?",opts:["Free","Six pounds","Eight pounds"],a:2,exp:"'Adults without membership pay eight pounds.'"},
+   ]},
+  {name:"Gap Fill",color:"#1a3a8f",type:"ld_gap",
+   starters:["Read the gaps BEFORE you listen","Gaps are usually: names, numbers, dates, 1–2 words","Spelling counts — listen carefully","You can listen more than once"],
+   questions:[
+    {title:"School Timetable",
+     text:"Good morning, students. I'd like to remind you about the changes to next week's timetable. Monday's geography lesson has been moved to Wednesday afternoon, in room fourteen. The science practical originally scheduled for Thursday will now take place on Friday morning instead. Also, the school library will be closed on Tuesday for a staff training day, so please plan accordingly. Any questions, speak to your form tutor.",
+     gaps:[
+      {sentence:"Geography is now on _____ afternoon.",answer:"Wednesday"},
+      {sentence:"It will be in room _____.",answer:"14"},
+      {sentence:"The science practical moves to _____ morning.",answer:"Friday"},
+      {sentence:"The library closes on _____ for training.",answer:"Tuesday"},
+     ]},
+    {title:"Medical Centre Voicemail",
+     text:"Hi, this is a message for Mrs Henderson from Westgate Medical Centre. Doctor Patel would like to reschedule your appointment on Tuesday the fifteenth. We have availability on Thursday the seventeenth at either ten thirty in the morning or three forty-five in the afternoon. Could you please call us back on oh one seven four three, double eight two, four five oh, to confirm which time suits you? Thank you and have a good day.",
+     gaps:[
+      {sentence:"The original appointment is Tuesday the _____.",answer:"15th"},
+      {sentence:"The new date is Thursday the _____.",answer:"17th"},
+      {sentence:"Morning slot available: _____ am.",answer:"10:30"},
+      {sentence:"Call back on 01743 _____ 450.",answer:"882"},
+     ]},
+    {title:"Radio Interview",
+     text:"Today I'm speaking to Doctor Emma Walsh, a nutritionist who has spent the past ten years researching the connection between diet and mental health. Doctor Walsh, what drew you to this area? Well, I actually started my career in sports nutrition, working mainly with professional athletes. But I became increasingly interested in how what we eat affects our mood and cognitive function — not just physical performance. After completing a second degree in psychology, I began conducting research with university students, focusing specifically on how dietary changes can reduce symptoms of anxiety and depression.",
+     gaps:[
+      {sentence:"Dr Walsh has researched this for _____ years.",answer:"10"},
+      {sentence:"She started in _____ nutrition.",answer:"sports"},
+      {sentence:"She completed a second degree in _____.",answer:"psychology"},
+      {sentence:"Her research is with _____ students.",answer:"university"},
+     ]},
+   ]},
+  {name:"True / False / NM",color:"#1a3a8f",type:"ld_tf",
+   starters:["TRUE = confirmed in the text","FALSE = the opposite is said","NOT MENTIONED = not referred to at all","Don't guess — only mark what you actually hear"],
+   questions:[
+    {title:"Travel Blogger Podcast",
+     text:"I started my travel blog about five years ago, originally just to keep friends and family updated while I was living abroad. I never imagined it would become my full-time job. These days I work with tourism boards and hotels, but I'm very careful about keeping my content honest — I always say no to sponsored posts that don't match my values. The hardest part of the job isn't the travel, it's actually the editing and the business side — dealing with contracts and invoices. I still travel economy class for most flights, by the way. I think it keeps me grounded and my content relatable.",
+     statements:[
+      {s:"She started the blog to earn money.",a:"F",exp:"She started it 'to keep friends and family updated' — not to earn money."},
+      {s:"She accepts all sponsored content offers.",a:"F",exp:"She 'always says no to sponsored posts that don't match her values'."},
+      {s:"She finds editing and admin difficult.",a:"T",exp:"'The hardest part is the editing and the business side.'"},
+      {s:"She travels business class when possible.",a:"F",exp:"She 'still travels economy class for most flights'."},
+      {s:"She has won awards for her blog.",a:"NM",exp:"Awards are never mentioned."},
+     ]},
+    {title:"Urban Beekeeping",
+     text:"Urban beekeeping has grown significantly in popularity over the past decade. Cities, it turns out, can actually be excellent environments for bees — with a greater diversity of flowering plants than many intensive farming areas, where pesticide use has devastated wild bee populations. Some cities now have more bee colonies per square kilometre than the surrounding countryside. However, critics point out that placing too many hives in one area can lead to competition for resources and may harm other pollinating insects. Several European cities have introduced limits on the number of hives permitted in a single district.",
+     statements:[
+      {s:"Urban areas can be better for bees than farmland.",a:"T",exp:"Cities 'can actually be excellent environments for bees' with more plant diversity than farming areas."},
+      {s:"Pesticides have helped urban bees grow in number.",a:"F",exp:"Pesticides have 'devastated wild bee populations' in farming areas — the opposite of helping."},
+      {s:"Some cities have more bees than the countryside.",a:"T",exp:"'Some cities now have more bee colonies per square kilometre than the surrounding countryside.'"},
+      {s:"Too many hives in one area can cause problems.",a:"T",exp:"Critics say it 'can lead to competition for resources and may harm other pollinators'."},
+      {s:"The UK has introduced limits on urban hives.",a:"NM",exp:"European cities are mentioned generally but the UK is not specified."},
+     ]},
+    {title:"Four-Day Working Week",
+     text:"A growing number of companies are introducing four-day working weeks, and early evidence suggests the results are encouraging. In trials conducted across several industries, productivity either remained the same or actually increased when employees worked one fewer day per week. Workers reported feeling significantly less stressed and more satisfied with their jobs. Not all sectors are finding it straightforward to implement, however — particularly healthcare and retail, where customer demand doesn't follow a five-day pattern. Unions have broadly welcomed the idea, though some employers remain cautious about the long-term financial implications.",
+     statements:[
+      {s:"Productivity fell in the four-day week trials.",a:"F",exp:"Productivity 'either remained the same or actually increased'."},
+      {s:"Workers reported less stress during the trials.",a:"T",exp:"'Workers reported feeling significantly less stressed and more satisfied with their jobs.'"},
+      {s:"All sectors found the change easy to implement.",a:"F",exp:"Healthcare and retail found it 'not straightforward to implement'."},
+      {s:"Unions have opposed the four-day week.",a:"F",exp:"'Unions have broadly welcomed the idea.'"},
+      {s:"The government plans to make the four-day week compulsory.",a:"NM",exp:"Government plans are not mentioned."},
+     ]},
+   ]},
+];
+
+// ── DATA: SPEAKING ──
+const SP_PARTS=[
+  {name:"Interview",color:"#2a5c24",
+   starters:["Well…","To be honest,","I'd say…","In my experience,","It depends on…","I really enjoy…","I tend to…","Personally,","What I find is that…","That's a good question…"],
+   questions:[
+    {topic:"Warm-up",q:"What's your name and where are you from?",t:10},
+    {topic:"Warm-up",q:"Are you a student or do you work?",t:10},
+    {topic:"Free time",q:"What do you usually do in your free time?",t:20},
+    {topic:"Free time",q:"Do you prefer spending time indoors or outdoors? Why?",t:20},
+    {topic:"Free time",q:"Tell me about a hobby you'd like to take up in the future.",t:20},
+    {topic:"Technology",q:"How important is technology in your daily life?",t:20},
+    {topic:"Technology",q:"Do you think people spend too much time on their phones?",t:20},
+    {topic:"Technology",q:"How has technology changed the way people communicate?",t:20},
+    {topic:"Travel",q:"Tell me about a place you'd really like to visit one day.",t:20},
+    {topic:"Travel",q:"Do you prefer travelling alone or with other people? Why?",t:20},
+    {topic:"Food",q:"Tell me about your favourite type of food or cuisine.",t:20},
+    {topic:"Food",q:"Do you think people today eat more healthily than in the past?",t:20},
+    {topic:"Media",q:"How much time do you spend watching TV or streaming series?",t:20},
+    {topic:"Media",q:"Do you prefer reading books or watching films? Why?",t:20},
+    {topic:"Future",q:"Where do you see yourself in five years' time?",t:20},
+    {topic:"Future",q:"What's one thing you'd like to learn or achieve this year?",t:20},
+   ]},
+  {name:"Voicemail",color:"#c8440a",
+   starters:["Hi, this is… calling,","I'm getting in touch because…","I'm afraid that…","Could you possibly…?","I'd be grateful if…","Thanks for your message,","That sounds great, I'd love to…","I look forward to hearing from you.","I just wanted to let you know…","I was wondering if…"],
+   questions:[
+    {type:"leave",scenario:"You ordered a laptop online but the screen arrived cracked. Leave a voicemail for customer service.",bullets:["Say who you are and what you ordered","Explain the problem clearly","Ask how they will resolve it"],prep:20,speak:40},
+    {type:"reply",from:"Your friend Jamie",msg:"Hey! We're going to a new escape room next Saturday — about 2 hours, costs around £20. Want to come?",bullets:["Thank your friend","Say if you can go or not","If no, explain why and suggest an alternative"],prep:20,speak:40},
+    {type:"leave",scenario:"You booked a restaurant for your birthday but plans changed. Leave a voicemail to cancel or change the booking.",bullets:["Explain who you are and your booking","Say why you need to change it","Ask if they can accommodate your request"],prep:20,speak:40},
+    {type:"reply",from:"Your English teacher",msg:"Hello! Tuesday's class moves to Thursday, same time. Could you bring your coursebook? Thanks!",bullets:["Confirm you got the message","Say if Thursday works","Ask one question about the lesson"],prep:20,speak:40},
+    {type:"leave",scenario:"You saw an advert for a part-time café job. Leave a voicemail expressing your interest.",bullets:["Say who you are and why you're calling","Explain briefly why you'd be suitable","Ask about hours and when to come for an interview"],prep:20,speak:40},
+    {type:"leave",scenario:"You borrowed a library book but accidentally lost it. Leave a voicemail for the library.",bullets:["Say who you are and which book","Explain what happened","Ask what you should do next"],prep:20,speak:40},
+    {type:"reply",from:"Your manager",msg:"Hi! Could you give a short 10-minute presentation at Thursday's team meeting about your current project?",bullets:["Confirm you received the message","Say if you can do it","Ask one clarifying question"],prep:20,speak:40},
+    {type:"leave",scenario:"You're organising a surprise birthday party and need to book a venue. Leave a voicemail for the events coordinator.",bullets:["Explain the occasion and what you need","Give key details (guests, date)","Ask about availability and price"],prep:20,speak:40},
+   ]},
+  {name:"Talk + Photos",color:"#1a3a8f",
+   starters:["This photo shows…","In this image,","Compared to the first,","On the other hand,","Both images suggest…","I'd choose this because…","One advantage might be…","One drawback could be…","It seems to me that…","What strikes me is…"],
+   questions:[
+    {task:"Your town has a large empty building. Choose TWO photos and discuss how the building could be used — advantages and disadvantages of each.",photos:[{lbl:"Community library",emoji:"📚",desc:"People reading & studying"},{lbl:"Sports centre",emoji:"🏋️",desc:"Gym equipment & training"},{lbl:"Art gallery",emoji:"🎨",desc:"Paintings & exhibitions"},{lbl:"Food market",emoji:"🥦",desc:"Fresh produce & local stalls"}]},
+    {task:"Your school wants to encourage students to be more active. Choose TWO photos and talk about how effective each activity might be.",photos:[{lbl:"Team football",emoji:"⚽",desc:"Playing together outdoors"},{lbl:"Yoga",emoji:"🧘",desc:"Stretching & mindfulness"},{lbl:"Swimming",emoji:"🏊",desc:"Laps in a pool"},{lbl:"Cycling",emoji:"🚴",desc:"Riding to school / work"}]},
+    {task:"People are finding different ways to help the environment. Choose TWO photos and discuss how helpful each approach might be.",photos:[{lbl:"Solar panels",emoji:"☀️",desc:"Rooftop energy generation"},{lbl:"Community garden",emoji:"🌱",desc:"Growing food together"},{lbl:"Electric car",emoji:"⚡🚗",desc:"Charging station"},{lbl:"Recycling",emoji:"♻️",desc:"Sorting waste & bins"}]},
+    {task:"Choose TWO inventions and talk about how each one has improved our lives.",photos:[{lbl:"Smartphone",emoji:"📱",desc:"Mobile communication"},{lbl:"Laptop / internet",emoji:"💻",desc:"Online learning & work"},{lbl:"Medical tech",emoji:"🏥",desc:"Scans & medical devices"},{lbl:"Public transport",emoji:"🚇",desc:"Trains & buses"}]},
+    {task:"Your city wants to attract more tourists. Choose TWO ideas and discuss how effective each might be.",photos:[{lbl:"Food festival",emoji:"🍽️",desc:"Local cuisine & street food"},{lbl:"Museums & history",emoji:"🏛️",desc:"Cultural heritage tours"},{lbl:"Music event",emoji:"🎶",desc:"Open-air concert"},{lbl:"Sports event",emoji:"🏆",desc:"International competition"}]},
+    {task:"Your workplace wants to improve employee wellbeing. Choose TWO initiatives and discuss their benefits.",photos:[{lbl:"Flexible hours",emoji:"⏰",desc:"Work from home options"},{lbl:"Gym membership",emoji:"🏃",desc:"Physical activity support"},{lbl:"Mindfulness sessions",emoji:"🧘",desc:"Mental health workshops"},{lbl:"Team activities",emoji:"👥",desc:"Social events & days out"}]},
+   ]},
+  {name:"Follow-up",color:"#6b35a0",
+   starters:["I think that…","In my opinion,","It could be argued that…","To some extent,","On one hand… on the other…","Personally, I believe…","That said,","A good example is…","From my point of view,","It depends on…"],
+   questions:[
+    {topic:"Technology",qs:["Do you think social media has made people better or worse at communicating?","How has technology changed the way young people socialise?","Is it important to have face-to-face conversations? Why?","What problems can arise from too much time online?","Do you think technology will ever replace human contact completely?","What advice would you give someone addicted to their phone?"]},
+    {topic:"Environment",qs:["Can individuals really make a difference to the environment?","Should governments do more to encourage recycling?","How important is it to teach children about environmental issues?","Will electric cars solve urban pollution problems?","What lifestyle changes would you make to help the environment?","Do businesses have a responsibility to be eco-friendly?"]},
+    {topic:"Health",qs:["Are people today more health-conscious than in the past?","How important is it for schools to teach healthy eating?","Should sport be compulsory at school?","What is the biggest threat to people's health today?","How has the way people exercise changed recently?","Is stress a bigger problem today than 20 years ago?"]},
+    {topic:"Education & Work",qs:["Is university education essential for a successful career?","How important is it to enjoy your job?","What skills matter most in the modern workplace?","Is it better to work from home or in an office?","How has technology changed the way people work?","What advice would you give someone choosing a career?"]},
+    {topic:"Culture & Arts",qs:["Do you think governments should fund the arts?","Is cinema an important part of culture today?","How has the internet changed the way people consume music?","Should art be a compulsory subject in schools?","How important is it to preserve traditional cultural practices?","Has streaming helped or harmed the music industry?"]},
+    {topic:"Travel & Tourism",qs:["How has the way people travel changed in recent years?","Is mass tourism a problem? Why?","Should people travel less for environmental reasons?","What is the best way to experience a new country?","How important is it to learn about local customs before visiting?","Has travel become more or less accessible than in previous generations?"]},
+   ]},
+];
+
+// ── DATA: READING ──
+const RD_PARTS=[
+  {name:"Synonyms",color:"#c8440a",type:"synonyms",
+   starters:["The word '…' is closest in meaning to…","'…' here suggests…","In this context, '…' means…","The prefix / suffix tells us…"],
+   questions:[
+    {text:"The government announced a <mark>sweeping</mark> reform of the education system, affecting schools across the country.",q:"'Sweeping' most closely means:",opts:["partial","comprehensive","sudden","controversial"],a:1,exp:"Sweeping = extensive, wide-ranging"},
+    {text:"Scientists have <mark>endeavoured</mark> to find a cure for the disease for over two decades.",q:"'Endeavoured' means:",opts:["failed","refused","tried hard","managed"],a:2,exp:"Endeavour = to try hard, to make an effort"},
+    {text:"The company's <mark>unprecedented</mark> growth surprised even its most optimistic investors.",q:"'Unprecedented' means:",opts:["expected","never seen before","steady","disappointing"],a:1,exp:"Unprecedented = never having happened before"},
+    {text:"Her <mark>candid</mark> interview shocked many viewers who weren't used to such honesty.",q:"'Candid' means:",opts:["formal","hesitant","honest and direct","prepared"],a:2,exp:"Candid = truthful and straightforward"},
+    {text:"The new policy was <mark>controversial</mark>, with critics and supporters arguing fiercely.",q:"'Controversial' means:",opts:["popular","causing disagreement","outdated","unnecessary"],a:1,exp:"Controversial = causing strong disagreement or debate"},
+    {text:"Residents were <mark>apprehensive</mark> about the proposed development near their homes.",q:"'Apprehensive' means:",opts:["excited","curious","worried","indifferent"],a:2,exp:"Apprehensive = anxious or worried about the future"},
+    {text:"The CEO made a <mark>compelling</mark> case for the merger at the shareholders' meeting.",q:"'Compelling' means:",opts:["weak","confusing","strongly persuasive","brief"],a:2,exp:"Compelling = convincing, forceful, hard to resist"},
+    {text:"The film received <mark>mixed</mark> reviews, with some critics praising it and others dismissing it.",q:"'Mixed' here means:",opts:["terrible","both positive and negative","mainly positive","surprising"],a:1,exp:"Mixed reviews = some good, some bad"},
+    {text:"The charity relies on <mark>voluntary</mark> contributions from the public to fund its work.",q:"'Voluntary' means:",opts:["government","compulsory","paid","freely given"],a:3,exp:"Voluntary = done willingly, not forced"},
+    {text:"The architect's <mark>innovative</mark> design won several international awards.",q:"'Innovative' means:",opts:["traditional","expensive","introducing new ideas","simple"],a:2,exp:"Innovative = featuring new and creative ideas"},
+    {text:"The speaker gave a <mark>concise</mark> summary of the main arguments.",q:"'Concise' means:",opts:["long and detailed","brief and clear","confusing","one-sided"],a:1,exp:"Concise = expressing much in few words, short and clear"},
+    {text:"Her <mark>resilience</mark> in the face of setbacks inspired her entire team.",q:"'Resilience' means:",opts:["anger","stubbornness","ability to recover quickly","indifference"],a:2,exp:"Resilience = ability to bounce back from difficulties"},
+    {text:"The proposal was met with <mark>scepticism</mark> by most members of the committee.",q:"'Scepticism' means:",opts:["enthusiasm","doubt","agreement","confusion"],a:1,exp:"Scepticism = doubt about whether something is true or will work"},
+    {text:"The documentary <mark>depicted</mark> life in remote rural communities.",q:"'Depicted' means:",opts:["criticised","showed / portrayed","ignored","improved"],a:1,exp:"Depict = to show or represent something"},
+    {text:"The new law <mark>prohibits</mark> the use of single-use plastics in restaurants.",q:"'Prohibits' means:",opts:["encourages","allows","bans","regulates"],a:2,exp:"Prohibit = to officially ban / not allow"},
+   ]},
+  {name:"Comprehension",color:"#1a3a8f",type:"mc",
+   starters:["According to the text…","The writer suggests that…","The main point is…","The text implies that…","The writer's purpose is to…"],
+   questions:[
+    {text:"Remote working has become increasingly common since the pandemic, offering employees greater flexibility. However, studies suggest that prolonged isolation can negatively affect mental health and reduce opportunities for collaboration. Many companies are therefore adopting hybrid models, combining home and office working.",q:"What does the text say about hybrid working?",opts:["It is worse than full remote working","It is a response to the disadvantages of remote working","It was introduced before the pandemic","It increases mental health problems"],a:1,exp:"Companies adopted hybrid models to address the problems of remote working (isolation, reduced collaboration)."},
+    {text:"Urban green spaces are under increasing pressure from housing development. Despite evidence that parks and gardens improve residents' mental health and air quality, local councils often struggle to justify their maintenance costs when facing budget cuts.",q:"Why do councils find it hard to protect green spaces?",opts:["Residents don't use them","They are too expensive to build","Budget pressures make costs hard to justify","There is no evidence of their benefits"],a:2,exp:"The text states councils 'struggle to justify maintenance costs when facing budget cuts'."},
+    {text:"Streaming services have transformed how audiences consume television. Unlike traditional broadcasting, which required viewers to follow a fixed schedule, streaming allows content to be watched at any time. This has led to 'binge-watching', which some psychologists link to disrupted sleep patterns.",q:"What is 'binge-watching' linked to?",opts:["Better entertainment choices","Increased social activity","Disrupted sleep","Higher subscription costs"],a:2,exp:"The text directly states binge-watching is linked to 'disrupted sleep patterns'."},
+    {text:"The popularity of fast fashion has grown considerably, driven by low prices and frequent new collections. Critics argue that this model is environmentally damaging, as vast quantities of clothing end up in landfill. Some brands are attempting to address this by introducing clothing rental and recycling schemes.",q:"What are some brands doing to respond to criticism?",opts:["Raising their prices","Stopping production","Introducing rental and recycling schemes","Reducing new collections"],a:2,exp:"The final sentence states brands are 'introducing clothing rental and recycling schemes'."},
+    {text:"A growing number of employers are replacing CV-based recruitment with skills-based assessments. Proponents argue this reduces unconscious bias and gives candidates from non-traditional backgrounds a fairer chance. Critics warn that such tests may disadvantage candidates who lack access to adequate preparation resources.",q:"What concern do critics have?",opts:["They take too long","They may be unfair to some candidates","Employers don't trust them","They ignore relevant experience"],a:1,exp:"Critics warn the tests 'may disadvantage candidates who lack access to adequate preparation resources'."},
+    {text:"Scientists have long debated whether intelligence is primarily determined by genetics or environment. While studies of identical twins suggest a significant genetic component, research also shows that access to quality education, nutrition, and stimulating environments can substantially influence cognitive development.",q:"What does the research show about intelligence?",opts:["It is entirely genetic","Only environment matters","Both genetics and environment play a role","Twins always have identical intelligence"],a:2,exp:"The text presents both a genetic component AND environmental influences as significant factors."},
+    {text:"Despite the global rise of English as a language of international business, many companies are finding that hiring employees with strong skills in local languages provides a significant competitive advantage in regional markets. Translation software, while improving rapidly, still struggles with nuance and cultural context.",q:"What advantage do local language skills provide?",opts:["They reduce the need for translation software","They give a competitive edge in regional markets","They replace the need for English","They are more important than English globally"],a:1,exp:"The text says 'hiring employees with strong local language skills provides a significant competitive advantage in regional markets'."},
+    {text:"Community gardens have been shown to provide multiple benefits beyond food production. Residents who participate report improved mental wellbeing, stronger social connections, and a greater sense of belonging. Some urban planners now advocate for including dedicated green spaces in new residential developments.",q:"What is the main benefit of community gardens described?",opts:["Reducing food costs","Improving physical health","Providing multiple social and wellbeing benefits","Attracting tourists"],a:2,exp:"The text highlights 'improved mental wellbeing, stronger social connections, and greater sense of belonging' — multiple benefits."},
+   ]},
+  {name:"Gap Fill",color:"#2a5c24",type:"gapfill",
+   starters:["The missing word is likely a…","The grammar here requires…","Looking at the context…","The collocation here is…"],
+   questions:[
+    {sentence:"Despite _____ exhausted, she finished the race.",blank:"being",exp:"Despite + gerund (being) — after 'despite' use noun or -ing form, NOT a clause"},
+    {sentence:"He apologised _____ being late to the meeting.",blank:"for",exp:"Apologise FOR + gerund — fixed collocation"},
+    {sentence:"The project was so complex _____ it took three years.",blank:"that",exp:"So + adjective + THAT + result clause"},
+    {sentence:"I wish I _____ harder when I was at school.",blank:"had studied",exp:"Wish + past perfect = regret about a past situation"},
+    {sentence:"She suggested _____ to a new restaurant for dinner.",blank:"going",exp:"Suggest + gerund (going), NOT suggest to go"},
+    {sentence:"The more you practise, _____ better you become.",blank:"the",exp:"The more… the + comparative — parallel comparative structure"},
+    {sentence:"He's lived in Madrid _____ he was a child.",blank:"since",exp:"Since + point in time vs 'for' + duration"},
+    {sentence:"Not only _____ she win the match, but she also broke the record.",blank:"did",exp:"Not only + inverted auxiliary (did) — inversion after negative adverb"},
+    {sentence:"By the time we arrived, the film _____ already started.",blank:"had",exp:"Past perfect — action completed before another past action"},
+    {sentence:"There's no point _____ about things you can't change.",blank:"worrying",exp:"No point + gerund — fixed expression"},
+    {sentence:"She _____ to finish the report by Friday.",blank:"is expected",exp:"Passive: is expected to do — impersonal obligation"},
+    {sentence:"_____ he studies hard, he won't pass.",blank:"Unless",exp:"Unless = if not — introduces a negative condition"},
+    {sentence:"I'd rather you _____ smoke in here.",blank:"didn't",exp:"I'd rather + subject + past simple (negative: didn't)"},
+    {sentence:"The meeting was put _____ until next week.",blank:"off",exp:"Put off = postpone — phrasal verb"},
+    {sentence:"She's the most talented student _____ I've ever taught.",blank:"that / (nothing)",exp:"Superlative + relative clause: most talented (that) I've ever taught"},
+   ]},
+  {name:"Odd One Out",color:"#6b35a0",type:"oddone",
+   starters:["This word doesn't fit because…","The others all relate to…","The odd one out is… because…","They all collocate with… except…"],
+   questions:[
+    {q:"Which word does NOT collocate with 'make'?",opts:["a decision","a mistake","a progress","a speech"],a:2,exp:"'Make a progress' is incorrect — progress is uncountable (no article). Say 'make progress'. The others all use 'make + a + noun'."},
+    {q:"Which is NOT a synonym of 'happy'?",opts:["content","elated","gloomy","thrilled"],a:2,exp:"Gloomy = sad or dark. Content, elated and thrilled all mean happy."},
+    {q:"Which word does NOT mean 'to decrease'?",opts:["decline","surge","drop","fall"],a:1,exp:"Surge = to increase sharply. Decline, drop and fall all mean to decrease."},
+    {q:"Which adjective does NOT describe a positive quality?",opts:["diligent","reckless","resilient","resourceful"],a:1,exp:"Reckless = careless about danger. Diligent, resilient and resourceful are all positive."},
+    {q:"Which word does NOT relate to 'reading'?",opts:["skim","browse","glance","mumble"],a:3,exp:"Mumble = to speak quietly and unclearly. Skim, browse and glance all describe ways of reading."},
+    {q:"Which does NOT collocate with 'take'?",opts:["take a photo","take a nap","take a decision","take an achievement"],a:3,exp:"We don't say 'take an achievement'. Say 'achieve something'. The others are all fixed collocations with 'take'."},
+    {q:"Which word does NOT mean 'to get bigger'?",opts:["expand","shrink","grow","increase"],a:1,exp:"Shrink = to get smaller. Expand, grow and increase all mean to get bigger."},
+    {q:"Which is NOT a linking word showing contrast?",opts:["however","nevertheless","furthermore","whereas"],a:2,exp:"Furthermore = in addition (adds info). However, nevertheless and whereas all show contrast."},
+    {q:"Which word does NOT relate to 'speaking'?",opts:["mumble","stutter","skim","whisper"],a:2,exp:"Skim = reading quickly. Mumble, stutter and whisper all describe ways of speaking."},
+    {q:"Which does NOT collocate with 'do'?",opts:["do homework","do a mistake","do your best","do research"],a:1,exp:"We say 'make a mistake', not 'do a mistake'. Do homework, do your best and do research are all correct."},
+    {q:"Which is NOT used to add information?",opts:["furthermore","in addition","nevertheless","what is more"],a:2,exp:"Nevertheless = despite this (shows contrast). Furthermore, in addition and what is more all ADD information."},
+    {q:"Which word does NOT describe a person's speaking style?",opts:["eloquent","articulate","coherent","sombre"],a:3,exp:"Sombre = dark or serious in mood — it doesn't describe speaking style. Eloquent, articulate and coherent all describe how someone speaks."},
+   ]},
+  {name:"Summarise",color:"#8a5c00",type:"summary",
+   starters:["The main idea is…","The text is mainly about…","In one sentence,…","The key point is…","The author argues that…","Despite…, the text shows that…"],
+   questions:[
+    {text:"The concept of 'digital detox' — deliberately disconnecting from screens and devices for a period of time — has grown in popularity as concerns about mental health and screen addiction increase. Proponents argue that stepping away from technology allows people to reconnect with the physical world, improve their sleep, and reduce anxiety. Sceptics, however, question whether short breaks from technology address the root causes of screen dependency.",q:"Summarise the main point in ONE sentence.",a:"Digital detoxing is becoming popular as a way to improve wellbeing, though whether it addresses the underlying causes of screen addiction is debated.",exp:"Include: the trend + the claimed benefit + the doubt raised"},
+    {text:"Attitudes to failure are shifting in many workplaces. Where once mistakes were viewed purely as setbacks, a growing number of organisations now encourage a culture of 'productive failure' — the idea that errors, when reflected upon, drive innovation and learning. Tech companies in particular have embraced this philosophy, viewing failed projects as investments in future success.",q:"Summarise the argument about failure in ONE sentence.",a:"Many organisations, particularly in the tech sector, now view failure as a valuable learning opportunity rather than something to be avoided.",exp:"Focus on the shift in attitude, not just the definition"},
+    {text:"Access to clean water remains one of the most pressing global challenges. Despite significant progress in many regions, over 700 million people worldwide still lack access to safe drinking water. Climate change is expected to worsen the situation by disrupting rainfall patterns and depleting freshwater reserves, placing the greatest burden on already vulnerable communities.",q:"Summarise the main challenge in ONE sentence.",a:"Although progress has been made, hundreds of millions still lack clean water, and climate change threatens to make this crisis significantly worse.",exp:"Acknowledge the progress but emphasise the ongoing and worsening problem"},
+    {text:"The rise of artificial intelligence in creative fields has sparked debate among artists and writers. While some welcome AI as a useful tool that can enhance creativity and reduce repetitive tasks, others fear that machine-generated content will devalue human artistic work and lead to widespread job losses in creative industries.",q:"Summarise the debate about AI in creative fields in ONE sentence.",a:"AI in creative fields is welcomed by some as a useful tool but feared by others as a threat to human artistic work and employment.",exp:"Include both sides of the argument fairly"},
+    {text:"Urban cycling infrastructure has expanded significantly in many European cities over the past decade. Dedicated cycle lanes, bike-sharing schemes, and improved safety measures have contributed to a marked increase in the number of people cycling to work. Supporters argue that this shift reduces traffic congestion and improves public health, though local business owners have raised concerns about the loss of parking spaces.",q:"Summarise the main argument in ONE sentence.",a:"Improved cycling infrastructure in European cities has increased cycling rates and health benefits, though it has also generated concerns from businesses about parking.",exp:"Include the positive impact AND the concern raised"},
+   ]},
+];
+
+// ── DATA: WRITING ──
+const WR_PARTS=[
+  {name:"Gap Fill",color:"#2a5c24",type:"wr_gapfill",
+   starters:["The missing word is…","Grammatically, this needs…","The collocation is…","The tense rule here is…"],
+   questions:[
+    {sentence:"She always _____ (LOOK) forward to her holidays.",blank:"looks",exp:"3rd person singular present simple — don't forget the -s!"},
+    {sentence:"By the time she arrived, he _____ (ALREADY / LEAVE).",blank:"had already left",exp:"Past perfect + already — action completed before another past event"},
+    {sentence:"If I _____ (BE) you, I would apologise.",blank:"were",exp:"2nd conditional: If + past simple (were — not 'was' in formal English)"},
+    {sentence:"She's used to _____ (WORK) long hours.",blank:"working",exp:"Used to + gerund (working). Don't confuse with 'used to do' (past habit)"},
+    {sentence:"It's high time we _____ (DO) something about climate change.",blank:"did",exp:"It's high time + past simple — expresses urgency"},
+    {sentence:"He had his car _____ (REPAIR) yesterday.",blank:"repaired",exp:"Have something done (causative) = have + object + past participle"},
+    {sentence:"She denied _____ (STEAL) the money.",blank:"stealing / having stolen",exp:"Deny + gerund — never deny + infinitive"},
+    {sentence:"The sooner we leave, _____ better.",blank:"the",exp:"The sooner… the better — comparative parallel structure"},
+    {sentence:"There's no use _____ (CRY) over spilt milk.",blank:"crying",exp:"No use + gerund — fixed expression"},
+    {sentence:"He _____ (NOT / FINISH) the report yet.",blank:"hasn't finished",exp:"Present perfect + yet — unfinished action with relevance to now"},
+    {sentence:"I'd rather you _____ (NOT / TELL) anyone about this.",blank:"didn't tell",exp:"I'd rather + subject + past simple (negative form)"},
+    {sentence:"She _____ (WORK) here for ten years when they promoted her.",blank:"had been working",exp:"Past perfect continuous — ongoing action before another past event"},
+    {sentence:"Despite _____ (BE) tired, she stayed late to finish the project.",blank:"being",exp:"Despite + gerund — never despite + that clause"},
+    {sentence:"He _____ (TEND) to exaggerate when he's nervous.",blank:"tends",exp:"Present simple for habits and tendencies — 3rd person -s"},
+    {sentence:"The museum _____ (OPEN) by the mayor next Friday.",blank:"will be opened / is being opened",exp:"Future or present continuous passive — depending on formality"},
+   ]},
+  {name:"Linkers",color:"#c8440a",type:"wr_linkers",
+   starters:["This adds information…","This shows contrast…","This shows result…","This shows reason…","This concedes a point…"],
+   questions:[
+    {sentence:"Sales fell dramatically. _____, the company managed to stay profitable.",opts:["Furthermore","Nevertheless","Therefore","Meanwhile"],a:1,exp:"Nevertheless = despite this (contrast/concession)"},
+    {sentence:"She studied hard. _____, she passed all her exams with top marks.",opts:["However","Nevertheless","As a result","Although"],a:2,exp:"As a result = therefore (shows consequence)"},
+    {sentence:"_____ the weather was terrible, they decided to go ahead with the outdoor event.",opts:["Despite","Although","Because of","Since"],a:1,exp:"Although + clause (subject + verb). Despite + noun/gerund."},
+    {sentence:"He was tired. _____, he stayed up to finish the project.",opts:["Therefore","Moreover","Even so","Because"],a:2,exp:"Even so = despite this — introduces a contrasting idea"},
+    {sentence:"The scheme is expensive. _____, it has proved highly effective.",opts:["As a result","That said","Furthermore","Since"],a:1,exp:"That said = however — introduces a contrasting point"},
+    {sentence:"She speaks French fluently. _____, she has a good command of Spanish.",opts:["However","What is more","Although","Even so"],a:1,exp:"What is more = furthermore — adds another positive point"},
+    {sentence:"_____ the project was over budget, the client was delighted with the result.",opts:["Moreover","Even though","As a result","Meanwhile"],a:1,exp:"Even though = although (strong surprising contrast)"},
+    {sentence:"The proposal was rejected. _____, the team decided to revise and resubmit it.",opts:["Nonetheless","As a result of","In spite of","Furthermore"],a:0,exp:"Nonetheless = nevertheless — shows contrast with expected outcome"},
+    {sentence:"_____ her young age, she handled the situation with remarkable maturity.",opts:["Despite","Although","However","Therefore"],a:0,exp:"Despite + noun phrase (her young age) — shows contrast"},
+    {sentence:"The restaurant is expensive. _____, the quality is outstanding.",opts:["Because","Even so","Therefore","Since"],a:1,exp:"Even so = despite this — the high price doesn't change the quality fact"},
+    {sentence:"The campaign raised funds. _____, it increased public awareness of the issue.",opts:["In contrast","Furthermore","However","Nevertheless"],a:1,exp:"Furthermore = in addition to this — adds another positive outcome"},
+    {sentence:"She was offered the job. _____, she decided to turn it down.",opts:["Therefore","However","Moreover","As a result"],a:1,exp:"However = but / on the other hand — shows unexpected contrast"},
+   ]},
+  {name:"Formal vs Informal",color:"#1a3a8f",type:"wr_formal",
+   starters:["A more formal way to say this is…","In formal writing, avoid…","Replace with…","The formal register requires…"],
+   questions:[
+    {informal:"I'm writing to ask about the job.",formal:"I am writing to enquire about the position.",exp:"Avoid contractions. 'Enquire' (formal) and 'position' instead of 'job'."},
+    {informal:"The results were really bad.",formal:"The results were deeply unsatisfactory / highly concerning.",exp:"Avoid 'really' in formal writing. Use 'deeply', 'highly', 'considerably'."},
+    {informal:"We got a lot of complaints.",formal:"A significant number of complaints were received.",exp:"Passive voice + formal quantifier. Avoid 'got' in formal writing."},
+    {informal:"Sorry for the late reply.",formal:"I apologise for the delay in responding.",exp:"Full apology construction. 'Apologise for + gerund' is more formal."},
+    {informal:"I think this is a good idea.",formal:"It is my view that this proposal has considerable merit.",exp:"Impersonal structure + formal vocabulary (merit, proposal, it is my view)"},
+    {informal:"People don't really know why this happens.",formal:"The reasons for this phenomenon remain unclear.",exp:"Impersonal + formal vocabulary. Avoid 'don't really know'."},
+    {informal:"Can you send me the details?",formal:"Could you please forward the relevant information at your earliest convenience?",exp:"Modal 'could' is more polite. 'At your earliest convenience' is formal for 'soon'."},
+    {informal:"The boss said we need to do better.",formal:"Management has indicated that performance improvements are required.",exp:"Avoid 'boss' — use 'management'. Passive + nominalisation."},
+    {informal:"We're going to look into the problem.",formal:"The matter will be investigated accordingly.",exp:"Passive voice makes writing more impersonal and formal."},
+    {informal:"Thanks a lot for your help.",formal:"I am most grateful for your assistance in this matter.",exp:"'Most grateful' + 'assistance' are formal. Avoid 'Thanks a lot'."},
+    {informal:"I want to work for your company.",formal:"I would be keen to contribute to your organisation.",exp:"'Would be keen to' is more formal than 'want'. 'Organisation' instead of 'company'."},
+    {informal:"We need to talk about this soon.",formal:"I would welcome the opportunity to discuss this matter at your earliest convenience.",exp:"'I would welcome the opportunity' is a formal way to request a meeting."},
+   ]},
+  {name:"Email Writing",color:"#6b35a0",type:"wr_email",
+   starters:["I am writing to…","Further to our…","I would be grateful if…","I look forward to…","Please do not hesitate to…","Thank you for your…","I am delighted to inform you…","I regret to inform you that…","I am writing in connection with…","With reference to…"],
+   questions:[
+    {type:"formal",scenario:"You recently bought a laptop from an online store. It arrived damaged and you've been unable to get a refund through their website. Write a formal email to the store manager.",bullets:["Explain the situation clearly","Say what you have already tried","State what you want them to do"],model:`Dear Sir/Madam,\n\nI am writing to bring to your attention a matter regarding a recent purchase made through your online store.\n\nOn 12 February, I ordered a laptop (Order No. 48291), which arrived in a damaged condition — specifically, with a cracked screen. I have since attempted to resolve this issue through your website's returns portal on three separate occasions, but have been unable to complete the process due to a technical error.\n\nI would be grateful if you could arrange for a full refund to be processed as a matter of urgency, or alternatively, provide a replacement unit. I have attached photographs of the damage and copies of my correspondence for your reference.\n\nI look forward to your prompt response. Should you require any further information, please do not hesitate to contact me.\n\nYours faithfully,\n[Name]`,tips:["Formal salutation: Dear Sir/Madam → Yours faithfully","Include specific details (dates, order numbers)","Use polite but assertive language","One clear request"]},
+    {type:"informal",scenario:"Your English friend Sam has invited you to stay for a week, but you can't go on the dates suggested. Write an informal email to Sam.",bullets:["Thank Sam for the invitation","Explain why you can't make those dates","Suggest an alternative time and say what you'd like to do"],model:`Hi Sam!\n\nThanks so much for the invitation — it was so lovely to hear from you! I'd absolutely love to come and visit.\n\nUnfortunately, the dates you suggested don't work for me as I've got my end-of-year exams that week and there's no way I can miss them! It's such a shame.\n\nWould it work if I came the week after instead? I was thinking we could go to that new restaurant you mentioned and maybe do a day trip somewhere — what do you think?\n\nLet me know if that suits you. Can't wait to catch up!\n\nLots of love,\n[Name]`,tips:["Informal: Hi Sam / Lots of love or Take care","Contractions are fine: I'd, I've, can't","Use informal connectors: though, as, so, but","Friendly, warm tone throughout"]},
+    {type:"formal",scenario:"You want to apply for a part-time internship at a local newspaper. Write a formal email to the editor expressing your interest.",bullets:["Say who you are and why you're writing","Explain your relevant experience or skills","Ask what the application process is"],model:`Dear Sir/Madam,\n\nI am writing to express my interest in a part-time internship at your publication, having come across the opportunity on your website.\n\nI am currently studying Journalism at university and am keen to gain practical experience in a professional newsroom. I have contributed articles to my university newspaper for the past two years, covering topics ranging from local politics to cultural events, and have developed strong research, writing and editing skills as a result.\n\nI would be most grateful if you could advise me on the application process and any documents I should submit. I have attached my CV for your initial consideration.\n\nI look forward to hearing from you.\n\nYours faithfully,\n[Name]`,tips:["Formal application: confident but not arrogant","Mention specific, relevant experience","End with a clear, polite request","No contractions, no informal vocabulary"]},
+    {type:"informal",scenario:"Your English friend Alex has just passed an important exam. Write an email to congratulate them and suggest celebrating together.",bullets:["Congratulate them warmly","Ask how they feel","Suggest something specific you could do to celebrate"],model:`Hey Alex!\n\nOh my goodness, I just heard the news — congratulations!!! You absolutely deserve it after all that hard work. I'm SO happy for you!\n\nHow are you feeling? I bet you're absolutely relieved! All those late-night study sessions were definitely worth it.\n\nWe have to celebrate! How about we go for dinner at that Italian place you've been wanting to try? Or if you fancy something more low-key, we could just grab some food at mine — I'll cook! Whatever you prefer, just let me know.\n\nSo proud of you. Speak soon!\n\n[Name]`,tips:["Exclamation marks are fine in informal writing","Use enthusiastic language: SO happy, absolutely, definitely","Give a specific suggestion, not just 'let's celebrate'","Match the energy to a genuinely happy occasion"]},
+    {type:"formal",scenario:"You attended a company training day last week but were disappointed with the organisation. Write a formal email to the HR manager.",bullets:["Explain which event you attended","State your main concern(s)","Suggest how things could be improved"],model:`Dear Sir/Madam,\n\nI am writing with regard to the training day held on 15 March, which I attended as a member of the marketing team.\n\nWhile I found the content of the sessions informative, I am writing to raise some concerns about the organisation of the event. In particular, the afternoon sessions began significantly later than scheduled, which meant that the final presentation was rushed and several participants were unable to attend the closing discussion.\n\nI would suggest that future events include a more realistic timetable, with adequate time built in for transitions between sessions. I believe this would greatly improve the overall experience for attendees.\n\nThank you for taking the time to consider my feedback. I would be happy to discuss this further if that would be helpful.\n\nYours faithfully,\n[Name]`,tips:["'With regard to' is a formal opener for complaints","Be constructive — always end with a suggestion","Use passive voice: 'were unable to attend' rather than 'couldn't go'","Thank them for reading — maintains politeness"]},
+    {type:"informal",scenario:"A friend is thinking of moving to your city. Write an email giving them advice about life there.",bullets:["Welcome the idea warmly","Give 2–3 practical pieces of advice","Offer to help them settle in"],model:`Hey!\n\nOh wow, that would be amazing if you moved here! I'd love having you nearby — seriously, do it!\n\nOK so a few things worth knowing: transport is actually pretty good if you get a monthly travel card, it works out so much cheaper than buying individual tickets. For accommodation, I'd avoid the city centre if you're on a budget — there are some really nice areas a bit further out that are much more affordable and still really well connected.\n\nAlso, there's a brilliant Saturday market near me — perfect for cheap food and getting to know the neighbourhood. I'll definitely take you when you visit!\n\nSeriously though, let me know if you need help finding a place or have any questions. I'm more than happy to show you around when you come to have a look. So excited!\n\n[Name]`,tips:["Informal: specific, friendly, personal","Use 'actually', 'seriously', 'so much' for natural informal register","Give concrete advice, not just 'it's great here'","Offer help — shows genuine warmth"]},
+   ]},
+  {name:"Complete Paragraph",color:"#8a5c00",type:"wr_complete",
+   starters:["Furthermore,","In addition to this,","It should also be noted that…","This is particularly evident in…","One possible explanation is…","As a consequence,","It is worth noting that…","However,","That said,","On the other hand,"],
+   questions:[
+    {task:"Continue this ESSAY opening. Write the NEXT paragraph (supporting your argument) in 4–5 sentences.",given:"Some people argue that social media has had an overwhelmingly negative effect on young people's mental health. While there is some truth to this view, the relationship between social media and wellbeing is considerably more complex.",model:"On the one hand, there is growing evidence that excessive use of social media platforms is associated with increased rates of anxiety and depression among young people. Studies have shown that constant exposure to carefully curated images of others' lives can generate feelings of inadequacy and social comparison. Furthermore, the addictive design of many platforms encourages prolonged use, which can displace activities known to support mental health, such as exercise, sleep, and face-to-face socialisation.",tip:"Use: On the one hand, Furthermore, It is worth noting, In addition"},
+    {task:"Write the next REVIEW paragraph covering the FOOD in 4–5 sentences.",given:"Situated in the heart of the city's cultural quarter, La Terraza has quickly established itself as one of the most talked-about restaurants of the year. With its elegant décor and attentive service, expectations are high even before you sit down.",model:"The menu, which changes seasonally, showcases locally sourced ingredients with a distinctly modern Mediterranean influence. Highlights from our visit included a beautifully presented burrata with roasted peppers and a melt-in-the-mouth slow-cooked lamb that had clearly benefited from hours of careful preparation. Portions are generous without being excessive, and the kitchen demonstrates a commendable willingness to cater for dietary requirements. That said, the dessert selection felt slightly uninspired compared to the ambition shown elsewhere on the menu.",tip:"Use specific details. Include a minor criticism — a purely positive review feels less credible."},
+    {task:"Complete this ARTICLE paragraph. Write the NEXT paragraph (a contrasting viewpoint) in 4–5 sentences.",given:"The integration of technology into classrooms has transformed the way students learn. Interactive whiteboards, educational apps, and online resources have made lessons more engaging and allowed teachers to personalise learning in ways that were previously impossible.",model:"However, not everyone is convinced that increased technology in schools is unambiguously beneficial. Critics point out that excessive screen time may impair children's ability to concentrate for extended periods and could hinder the development of handwriting and fine motor skills. Moreover, the digital divide remains a significant concern: students from lower-income households may lack access to devices or reliable internet at home, potentially widening existing educational inequalities. There is also the question of distraction — research suggests that unsupervised access to devices during lessons can significantly reduce academic performance.",tip:"Start with 'However' to signal contrast. Address the opposite viewpoint fairly and with evidence."},
+    {task:"Write the next paragraph of this OPINION ESSAY. Develop a second supporting argument in 4–5 sentences.",given:"There are many compelling reasons why people should try to learn at least one foreign language during their lifetime. Firstly, bilingualism has been shown to offer significant cognitive benefits, including improved memory and problem-solving skills.",model:"In addition to the cognitive benefits, learning a foreign language provides enormous practical advantages. Being able to communicate in another language opens up career opportunities both at home and abroad, making candidates more attractive to international employers. Furthermore, it allows travellers to engage more deeply with local cultures and communities, going beyond the surface-level experience that is often limited by the language barrier. Research also suggests that bilingual speakers are better able to empathise with others, as navigating between languages develops a heightened sensitivity to communication and perspective.",tip:"Pick up from the first argument and ADD a new one. Use 'In addition', 'Furthermore', 'Research also suggests'."},
+    {task:"Write the CONCLUSION to this ESSAY in 4–5 sentences.",given:"In conclusion, the question of whether working from home benefits or harms employees is not one that can be answered simply. The evidence presented suggests that the impact varies enormously depending on individual circumstances, job type, and the quality of remote working arrangements.",model:"For those with a suitable home environment, strong self-discipline, and roles that do not rely heavily on in-person collaboration, remote working can offer significant advantages in terms of flexibility, wellbeing, and productivity. However, for others — particularly those in more junior roles, those with limited space at home, or those who thrive on social interaction — the office environment remains essential. Ultimately, the most effective approach for many organisations appears to be a flexible hybrid model that accommodates both preferences. What is clear is that a one-size-fits-all policy is unlikely to serve the diverse needs of a modern workforce.",tip:"A strong conclusion: summarises both sides, gives a clear view, ends with a broad statement. Avoid introducing new arguments."},
+   ]},
+];
+
+// ── STATE ──
+let mod=0,part=0,qIdx=0,fupIdx=0,selPhotos=[];
+let shuffled={sp:[],rd:[],wr:[],ld:[]};
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function initShuffled(){
+  shuffled.sp=SP_PARTS.map(p=>shuffle([...p.questions]));
+  shuffled.rd=RD_PARTS.map(p=>shuffle([...p.questions]));
+  shuffled.wr=WR_PARTS.map(p=>shuffle([...p.questions]));
+  shuffled.ld=LD_PARTS.map(p=>shuffle([...p.questions]));
+}
+initShuffled();
+
+// ── MODULE / PART SELECT ──
+function selectModule(m){
+  stopTimer();
+  if(window.speechSynthesis&&window.speechSynthesis.speaking)window.speechSynthesis.cancel();
+  mod=m;part=0;qIdx=0;fupIdx=0;selPhotos=[];
+  document.querySelectorAll('.mod-tab').forEach((t,i)=>t.classList.toggle('active',i===m));
+  renderPartTabs();renderCard();
+}
+function selectPart(p){
+  stopTimer();
+  if(window.speechSynthesis&&window.speechSynthesis.speaking)window.speechSynthesis.cancel();
+  part=p;qIdx=0;fupIdx=0;selPhotos=[];
+  document.querySelectorAll('.part-tab').forEach((t,i)=>t.classList.toggle('active',i===p));
+  renderCard();
+}
+function renderPartTabs(){
+  const data=mod===0?SP_PARTS:mod===1?RD_PARTS:mod===2?WR_PARTS:LD_PARTS;
+  document.getElementById('partTabs').innerHTML=data.map((p,i)=>`
+    <button class="part-tab${i===0?' active':''}" onclick="selectPart(${i})" style="${i===0?`border-color:${p.color};background:${p.color};color:#fff`:''}">
+      <span class="pt-num" style="${i===0?'color:#fff':''}">${i+1}</span>${p.name}
+    </button>`).join('');
+}
+function highlightPartTab(){
+  const data=mod===0?SP_PARTS:mod===1?RD_PARTS:mod===2?WR_PARTS:LD_PARTS;
+  document.querySelectorAll('.part-tab').forEach((t,i)=>{
+    const ac=i===part;t.classList.toggle('active',ac);
+    t.style.borderColor=ac?data[i].color:'';t.style.background=ac?data[i].color:'';
+    t.style.color=ac?'#fff':'';t.querySelector('.pt-num').style.color=ac?'#fff':'';
+  });
+}
+
+// ── RENDER CARD ──
+const $=id=>document.getElementById(id);
+function setHeader(title,count){$('cardTitle').textContent=title;$('qCount').textContent=count;}
+function setProgress(cur,tot){$('progFill').style.width=`${(cur/tot)*100}%`;}
+function clearTimer(){$('timerWrap').style.display='none';}
+function mkBtn(cls,txt,onclick,color=''){const b=document.createElement('button');b.className=`btn ${cls}`;b.textContent=txt;b.onclick=onclick;if(color)b.style.background=color;return b;}
+function nextQ(qs,render){qIdx=(qIdx+1)%qs.length;fupIdx=0;selPhotos=[];render();}
+
+function renderQuickNav(){
+  const data=mod===0?SP_PARTS:mod===1?RD_PARTS:mod===2?WR_PARTS:LD_PARTS;
+  if(data.length<=1){document.getElementById('quickNav').style.display='none';return;}
+  document.getElementById('quickNav').style.display='flex';
+  document.getElementById('quickNavBtns').innerHTML=data.map((p,i)=>`
+    <button onclick="selectPart(${i})" style="
+      flex:1;min-width:60px;padding:8px 6px;border-radius:10px;font-size:11px;font-weight:700;
+      cursor:pointer;font-family:'Outfit',sans-serif;touch-action:manipulation;
+      border:1.5px solid ${i===part?p.color:'var(--border)'};
+      background:${i===part?p.color:'var(--card)'};
+      color:${i===part?'#fff':'var(--muted)'};
+      transition:all .18s;text-align:center;line-height:1.3;
+    ">${i===part?'▶ ':''}Part ${i+1}<br><span style="font-size:10px;font-weight:500;opacity:.85">${p.name.split(' ')[0]}</span></button>
+  `).join('');
+}
+
+function renderCard(){
+  highlightPartTab();stopTimer();
+  const data=mod===0?SP_PARTS:mod===1?RD_PARTS:mod===2?WR_PARTS:LD_PARTS;
+  const p=data[part];
+  $('partTag').textContent=`Part ${part+1}`;$('partTag').style.background=p.color;
+  $('progFill').style.background=p.color;
+  if(p.starters&&p.starters.length){
+    $('startersCard').style.display='';
+    $('starterChips').innerHTML=p.starters.map(s=>{
+      const clean=s.replace(/[.…,]/g,'').trim();
+      const url='https://www.playphrase.me/#/search?q='+encodeURIComponent(clean);
+      return `<a class="chip" href="${url}" target="_blank" rel="noopener" style="text-decoration:none;cursor:pointer" title="Hear in movies 🎬">${s} <span style="font-size:10px;opacity:.6">🎬</span></a>`;
+    }).join('');
+    $('startersLbl').textContent=mod===0?'💬 Useful phrases — tap to hear in movies 🎬':mod===3?'🎧 Listening tips':'📝 Key language — tap to hear in movies 🎬';
+  } else $('startersCard').style.display='none';
+  if(mod===0)renderSpeaking(p);
+  else if(mod===1)renderReading(p);
+  else if(mod===2)renderWriting(p);
+  else renderListening(p);
+  renderQuickNav();
+}
+
+// ── SPEAKING ──
+function renderSpeaking(p){
+  const qs=shuffled.sp[part];
+  if(part===0)renderInterview(p,qs);
+  else if(part===1)renderVoicemail(p,qs);
+  else if(part===2)renderTalkPhotos(p,qs);
+  else renderFollowUp(p,qs);
+}
+function renderInterview(p,qs){
+  const q=qs[qIdx%qs.length];
+  setHeader('Interview — Personal Questions',`${qIdx%qs.length+1}/${qs.length}`);
+  setProgress(qIdx%qs.length+1,qs.length);showTimer(q.t,'seconds to answer');
+  $('cardBody').innerHTML=`<div class="int-topic">${q.topic}</div><div class="int-q">"${q.q}"</div><div style="font-size:12px;color:var(--muted);text-align:center">Press Start when ready</div>`;
+  $('cardFoot').innerHTML='';
+  const go=mkBtn('btn-go','▶ Start',()=>{go.remove();const stop=mkBtn('btn-stop','⏹ Done',()=>{stopTimer();showNextBtn(()=>nextQ(qs,()=>renderInterview(p,qs)));});$('cardFoot').appendChild(stop);startTimer(q.t,'seconds to answer',()=>showNextBtn(()=>nextQ(qs,()=>renderInterview(p,qs))));},p.color);
+  $('cardFoot').appendChild(go);
+}
+function renderVoicemail(p,qs){
+  const q=qs[qIdx%qs.length];
+  setHeader(q.type==='leave'?'Leave a voicemail':'Reply to a voicemail',`${qIdx%qs.length+1}/${qs.length}`);
+  setProgress(qIdx%qs.length+1,qs.length);showTimer(q.prep,'prep time');
+  let body=q.type==='leave'?`<div class="task-tag">Your task</div><div class="vm-box" style="border-left:3px solid ${p.color}"><div class="vm-from" style="color:${p.color}">🎙️ Situation</div><div class="vm-text">${q.scenario}</div><div class="vm-bullets">${q.bullets.map(b=>`<div class="vm-b">${b}</div>`).join('')}</div></div>`:`<div class="task-tag">Message from ${q.from}</div><div class="vm-box" style="border-left:3px solid var(--muted)"><div class="vm-from" style="color:var(--muted)">📩 ${q.from}:</div><div class="vm-text">"${q.msg}"</div></div><div class="vm-box" style="border-left:3px solid ${p.color}"><div class="vm-from" style="color:${p.color}">Your reply should:</div><div class="vm-bullets">${q.bullets.map(b=>`<div class="vm-b">${b}</div>`).join('')}</div></div>`;
+  body+=`<div style="font-size:11px;color:var(--muted);text-align:center">⏱️ Prep: ${q.prep}s → Speak: ${q.speak}s</div>`;
+  $('cardBody').innerHTML=body;$('cardFoot').innerHTML='';
+  const prep=mkBtn('btn-go',`⏱️ Prep (${q.prep}s)`,()=>{prep.remove();startTimer(q.prep,'preparation time',()=>{$('cardFoot').innerHTML='';const spk=mkBtn('btn-stop',`🎙️ Speaking (${q.speak}s)`,()=>{stopTimer();showNextBtn(()=>nextQ(qs,()=>renderVoicemail(p,qs)));},p.color);$('cardFoot').appendChild(spk);startTimer(q.speak,'seconds to speak',()=>showNextBtn(()=>nextQ(qs,()=>renderVoicemail(p,qs))));});},p.color);
+  $('cardFoot').appendChild(prep);
+}
+function renderTalkPhotos(p,qs){
+  const q=qs[qIdx%qs.length];selPhotos=[];
+  setHeader('Talk — Choose 2 Photos',`${qIdx%qs.length+1}/${qs.length}`);
+  setProgress(qIdx%qs.length+1,qs.length);showTimer(30,'30s prep · 60s talk');
+  const grid=q.photos.map((ph,i)=>`<div class="photo-item" id="ph${i}" onclick="togglePh(${i})"><div class="ph-emoji">${ph.emoji}</div><div class="ph-lbl">${ph.lbl}</div><div class="ph-desc">${ph.desc}</div><div class="tick">✓</div></div>`).join('');
+  $('cardBody').innerHTML=`<div class="task-tag">Talk + Photos</div><div class="task-q">${q.task}</div><div class="sel-hint">Tap to select 2 photos, then start</div><div class="photo-grid">${grid}</div><div class="sel-info" id="selInfo">Select 2 photos to continue</div>`;
+  $('cardFoot').innerHTML='';
+  const go=mkBtn('btn-go','▶ Start (prep 30s)',null,p.color);go.id='goTalkBtn';go.disabled=true;go.style.opacity='.4';
+  go.onclick=()=>{go.remove();startTimer(30,'preparation time',()=>{$('cardFoot').innerHTML='';const stop=mkBtn('btn-stop','⏹ Done talking',()=>{stopTimer();showNextBtn(()=>nextQ(qs,()=>renderTalkPhotos(p,qs)));});$('cardFoot').appendChild(stop);startTimer(60,'seconds to talk',()=>showNextBtn(()=>nextQ(qs,()=>renderTalkPhotos(p,qs))));});};
+  $('cardFoot').appendChild(go);
+}
+function togglePh(i){
+  const idx=selPhotos.indexOf(i);
+  if(idx>-1){selPhotos.splice(idx,1);document.getElementById('ph'+i).classList.remove('sel');}
+  else if(selPhotos.length<2){selPhotos.push(i);document.getElementById('ph'+i).classList.add('sel');}
+  const info=$('selInfo'),go=$('goTalkBtn');
+  if(selPhotos.length===2){info.textContent='✓ Ready! Press Start.';if(go){go.disabled=false;go.style.opacity='1';}}
+  else{info.textContent=`${selPhotos.length}/2 selected`;if(go){go.disabled=true;go.style.opacity='.4';}}
+}
+function renderFollowUp(p,qs){
+  const set=qs[qIdx%qs.length];
+  setHeader(`Follow-up — ${set.topic}`,`Set ${qIdx%qs.length+1}/${qs.length}`);
+  setProgress(qIdx%qs.length+1,qs.length);
+  const q=set.qs[fupIdx%set.qs.length];showTimer(30,'seconds to answer');
+  $('cardBody').innerHTML=`<div class="task-tag">Question ${fupIdx%set.qs.length+1} of ${set.qs.length}</div><div class="fup-box" style="background:#f5f0e6"><div class="fup-meta">${set.topic}</div>${q}</div><div style="font-size:12px;color:var(--muted)">Give a developed answer with reasons and examples</div>`;
+  $('cardFoot').innerHTML='';
+  const go=mkBtn('btn-go','▶ Start',()=>{go.remove();const stop=mkBtn('btn-stop','⏹ Done',()=>{stopTimer();fupIdx++;if(fupIdx>=set.qs.length){fupIdx=0;showNextBtn(()=>{qIdx=(qIdx+1)%qs.length;renderFollowUp(p,qs);});}else renderFollowUp(p,qs);});$('cardFoot').appendChild(stop);startTimer(30,'seconds to answer',()=>{fupIdx++;if(fupIdx>=set.qs.length){fupIdx=0;showNextBtn(()=>{qIdx=(qIdx+1)%qs.length;renderFollowUp(p,qs);});}else renderFollowUp(p,qs);});},p.color);
+  $('cardFoot').appendChild(go);
+}
+function showNextBtn(cb){$('cardFoot').innerHTML='';const b=mkBtn('btn-next','Next →',cb);$('cardFoot').appendChild(b);}
+
+// ── READING ──
+function renderReading(p){
+  const qs=shuffled.rd[part];const q=qs[qIdx%qs.length];
+  setHeader(p.name,`${qIdx%qs.length+1}/${qs.length}`);setProgress(qIdx%qs.length+1,qs.length);clearTimer();
+  $('cardBody').innerHTML='';$('cardFoot').innerHTML='';
+  if(p.type==='synonyms'||p.type==='mc'||p.type==='oddone')renderMCStyle(p,q,qs);
+  else if(p.type==='gapfill')renderRdGapFill(p,q,qs);
+  else if(p.type==='summary')renderSummary(p,q,qs);
+}
+function renderMCStyle(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">${p.name}</div>${q.text?`<div class="reading-text">${q.text}</div>`:''}<div class="task-q">${q.q}</div><div class="choices">${q.opts.map((o,i)=>`<button class="choice" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div class="ans-box" id="ansBox"><div class="ans-lbl">Explanation</div><div class="ans-text" id="ansText"></div><div class="ans-exp" id="ansExp"></div><div id="ppWrap"></div></div>`;
+  document.querySelectorAll('.choice').forEach(btn=>{btn.addEventListener('click',()=>{const i=parseInt(btn.dataset.i);document.querySelectorAll('.choice').forEach(b=>b.disabled=true);$('ansText').textContent=q.opts[q.a];$('ansExp').textContent=q.exp;$('ansBox').classList.add('show');
+    // PlayPhrase button for vocab exercises
+    if(p.type==='synonyms'||p.type==='oddone'){const ppWrap=$('ppWrap');if(ppWrap)ppWrap.innerHTML=ppBtn(q.opts[q.a]);}
+    score.t++;if(i===q.a){btn.classList.add('correct');score.c++;}else{btn.classList.add('wrong');document.querySelectorAll('.choice')[q.a].classList.add('reveal');score.w++;}updScore();showNextBtn(()=>nextQ(shuffled.rd[part],()=>renderReading(RD_PARTS[part])));});});
+}
+function renderRdGapFill(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Gap Fill</div><div class="reading-text">${q.sentence.replace('_____','<strong>_____</strong>')}</div><input class="fill-input" id="rdInput" placeholder="Type the missing word(s)…" autocomplete="off" spellcheck="false"><div class="ans-box" id="ansBox"><div class="ans-lbl">Answer</div><div class="ans-text" id="ansText"></div><div class="ans-exp" id="ansExp"></div></div>`;
+  $('cardFoot').innerHTML='';
+  const chk=mkBtn('btn-check','Check ✓',()=>{const val=$('rdInput').value.trim().toLowerCase();const ok=q.blank.toLowerCase().split('/').map(s=>s.trim()).some(s=>val===s);$('ansText').textContent=q.blank;$('ansExp').textContent=q.exp;$('ansBox').classList.add('show');score.t++;if(ok){score.c++;chk.textContent='✅ Correct!';chk.style.background='var(--green)';}else{score.w++;chk.textContent='❌ See answer';chk.style.background='var(--orange)';}chk.disabled=true;updScore();showNextBtn(()=>nextQ(shuffled.rd[part],()=>renderReading(RD_PARTS[part])));},p.color);
+  $('cardFoot').appendChild(chk);
+}
+function renderSummary(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Summarise in ONE sentence</div><div class="reading-text">${q.text}</div><div class="task-q" style="font-size:13.5px">${q.q}</div><textarea class="fill-input" id="rdInput" placeholder="Write your one-sentence summary here…" rows="3" style="resize:vertical"></textarea><div class="ans-box" id="ansBox"><div class="ans-lbl">Model Answer</div><div class="ans-text" id="ansText"></div><div class="ans-exp" id="ansExp"></div></div>`;
+  $('cardFoot').innerHTML='';
+  const rev=mkBtn('btn-reveal','See model answer',()=>{$('ansText').textContent=q.a;$('ansExp').textContent=q.exp;$('ansBox').classList.add('show');rev.remove();score.t++;updScore();const y=mkBtn('btn-y','✅ Got it!',()=>{score.c++;updScore();nextQ(shuffled.rd[part],()=>renderReading(RD_PARTS[part]));});const n=mkBtn('btn-n','❌ Missed it',()=>{score.w++;updScore();nextQ(shuffled.rd[part],()=>renderReading(RD_PARTS[part]));});$('cardFoot').appendChild(y);$('cardFoot').appendChild(n);},p.color);
+  $('cardFoot').appendChild(rev);
+}
+
+// ── WRITING ──
+function renderWriting(p){
+  const qs=shuffled.wr[part];const q=qs[qIdx%qs.length];
+  setHeader(p.name,`${qIdx%qs.length+1}/${qs.length}`);setProgress(qIdx%qs.length+1,qs.length);clearTimer();
+  $('cardBody').innerHTML='';$('cardFoot').innerHTML='';
+  if(p.type==='wr_gapfill')renderWrGapFill(p,q,qs);
+  else if(p.type==='wr_linkers')renderWrLinkers(p,q,qs);
+  else if(p.type==='wr_formal')renderWrFormal(p,q,qs);
+  else if(p.type==='wr_email')renderWrEmail(p,q,qs);
+  else if(p.type==='wr_complete')renderWrComplete(p,q,qs);
+}
+function renderWrGapFill(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Grammar Gap Fill</div><div class="prompt-box" style="border-left-color:${p.color}">${q.sentence.replace('_____',`<strong style="color:${p.color}">_____</strong>`)}</div><input class="fill-input" id="wrInput" placeholder="Complete the gap…" autocomplete="off" spellcheck="false"><div class="ans-box" id="ansBox"><div class="ans-lbl">Answer</div><div class="ans-text" id="ansText" style="color:${p.color}"></div><div class="ans-exp" id="ansExp"></div></div>`;
+  $('cardFoot').innerHTML='';
+  const chk=mkBtn('btn-check','Check ✓',()=>{const val=$('wrInput').value.trim().toLowerCase();const ok=q.blank.toLowerCase().split('/').map(s=>s.trim()).some(s=>val===s||val.includes(s));$('ansText').textContent=q.blank;$('ansExp').textContent=q.exp;$('ansBox').classList.add('show');score.t++;if(ok){score.c++;chk.textContent='✅ Correct!';chk.style.background=p.color;}else{score.w++;chk.textContent='❌ See answer';chk.style.background='var(--orange)';}chk.disabled=true;updScore();showNextBtn(()=>nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part])));},p.color);
+  $('cardFoot').appendChild(chk);
+}
+function renderWrLinkers(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Linkers & Connectors</div><div class="prompt-box" style="border-left-color:${p.color}">${q.sentence}</div><div class="choices">${q.opts.map((o,i)=>`<button class="choice" data-i="${i}">${o}</button>`).join('')}</div><div class="ans-box" id="ansBox"><div class="ans-lbl">Why?</div><div class="ans-text" id="ansText" style="color:${p.color}"></div><div id="ppWrap"></div></div>`;
+  document.querySelectorAll('.choice').forEach(btn=>{btn.addEventListener('click',()=>{const i=parseInt(btn.dataset.i);document.querySelectorAll('.choice').forEach(b=>b.disabled=true);$('ansText').textContent=q.exp;$('ansBox').classList.add('show');
+    const ppWrap=$('ppWrap');if(ppWrap)ppWrap.innerHTML=ppBtn(q.opts[q.a]);
+    score.t++;if(i===q.a){btn.classList.add('correct');score.c++;}else{btn.classList.add('wrong');document.querySelectorAll('.choice')[q.a].classList.add('reveal');score.w++;}updScore();showNextBtn(()=>nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part])));});});
+}
+function renderWrFormal(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Formal vs Informal — rewrite formally</div><div class="prompt-box" style="border-left-color:var(--orange);background:#fdf5f0"><span style="font-size:10px;font-weight:700;color:var(--orange);letter-spacing:.5px;text-transform:uppercase">❌ Informal</span><br><span style="font-size:14px;line-height:1.6">"${q.informal}"</span></div><textarea class="fill-input" id="wrInput" placeholder="Rewrite this more formally…" rows="2" style="resize:vertical"></textarea><div class="ans-box" id="ansBox"><div class="ans-lbl">Formal version</div><div class="ans-text" id="ansText" style="color:${p.color}"></div><div class="ans-exp" id="ansExp"></div></div>`;
+  $('cardFoot').innerHTML='';
+  const rev=mkBtn('btn-reveal','See formal version',()=>{$('ansText').textContent=q.formal;$('ansExp').textContent=q.exp;$('ansBox').classList.add('show');rev.remove();score.t++;updScore();const y=mkBtn('btn-y','✅ Got it!',()=>{score.c++;updScore();nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part]));});const n=mkBtn('btn-n','❌ Not quite',()=>{score.w++;updScore();nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part]));});$('cardFoot').appendChild(y);$('cardFoot').appendChild(n);},p.color);
+  $('cardFoot').appendChild(rev);
+}
+function renderWrEmail(p,q,qs){
+  const isF=q.type==='formal';
+  $('cardBody').innerHTML=`<div class="task-tag">${isF?'Formal':'Informal'} Email</div><div class="prompt-box" style="border-left-color:${p.color}">${q.scenario}</div><div class="vm-box" style="border-left:2px solid ${p.color};background:#f8f4ff"><div class="vm-from" style="color:${p.color}">Include:</div><div class="vm-bullets">${q.bullets.map(b=>`<div class="vm-b">${b}</div>`).join('')}</div></div><div style="font-size:11px;color:var(--muted)">⏱️ Give yourself 15–20 minutes, then check the model.</div><div class="model-box" id="modelBox"><div class="model-lbl">Model Email</div><div class="model-text">${q.model}</div></div><div class="model-box" id="tipsBox" style="background:#eef4ee;border:1px solid #c5dcc5"><div class="model-lbl" style="color:${p.color}">Key tips ✓</div><div style="font-size:12px;color:var(--txt);line-height:1.6">${q.tips.map(t=>`<div>• ${t}</div>`).join('')}</div></div>`;
+  $('cardFoot').innerHTML='';
+  const rev=mkBtn('btn-reveal','Show model email',()=>{$('modelBox').classList.add('show');$('tipsBox').classList.add('show');rev.remove();score.t++;updScore();showNextBtn(()=>nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part])));},p.color);
+  $('cardFoot').appendChild(rev);
+}
+function renderWrComplete(p,q,qs){
+  $('cardBody').innerHTML=`<div class="task-tag">Complete the paragraph</div><div class="task-q" style="font-size:13.5px">${q.task}</div><div class="prompt-box" style="border-left-color:${p.color};white-space:pre-line;font-size:13px">${q.given}</div><div class="tip-box">💡 Use: ${q.tip}</div><textarea class="fill-input" id="wrInput" placeholder="Continue the text here…" rows="5" style="resize:vertical"></textarea><div class="model-box" id="modelBox"><div class="model-lbl">Model paragraph</div><div class="model-text">${q.model}</div></div>`;
+  $('cardFoot').innerHTML='';
+  const rev=mkBtn('btn-reveal','See model paragraph',()=>{$('modelBox').classList.add('show');rev.remove();score.t++;updScore();const y=mkBtn('btn-y','✅ Good match!',()=>{score.c++;updScore();nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part]));});const n=mkBtn('btn-n','❌ Need to improve',()=>{score.w++;updScore();nextQ(shuffled.wr[part],()=>renderWriting(WR_PARTS[part]));});$('cardFoot').appendChild(y);$('cardFoot').appendChild(n);},p.color);
+  $('cardFoot').appendChild(rev);
+}
+
+// ── LISTENING ──
+function renderListening(p){
+  const qs=shuffled.ld[part];const q=qs[qIdx%qs.length];
+  setHeader(p.name,`${qIdx%qs.length+1}/${qs.length}`);setProgress(qIdx%qs.length+1,qs.length);clearTimer();
+  $('cardBody').innerHTML='';$('cardFoot').innerHTML='';
+  if(p.type==='ld_mc')renderLdMC(p,q,qs);
+  else if(p.type==='ld_gap')renderLdGap(p,q,qs);
+  else renderLdTF(p,q,qs);
+}
+
+function renderLdMC(p,q,qs){
+  const id='ld'+(qIdx%qs.length);
+  $('cardBody').innerHTML=`
+    ${audioPlayer(q.title,q.text,id)}
+    <div class="task-tag">Multiple Choice — choose ONE answer</div>
+    <div class="task-q">${q.q}</div>
+    <div class="choices">${q.opts.map((o,i)=>`<button class="choice" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
+    <div class="ans-box" id="ansBox"><div class="ans-lbl">Explanation</div><div class="ans-text" id="ansText"></div></div>
+    <button onclick="showTr('${id}')" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11.5px;color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif;align-self:flex-start">📄 Show / hide transcript</button>
+    <div class="transcript-box" id="tr-${id}" style="display:none">${q.text}</div>`;
+  document.querySelectorAll('.choice').forEach(btn=>{btn.addEventListener('click',()=>{const i=parseInt(btn.dataset.i);document.querySelectorAll('.choice').forEach(b=>b.disabled=true);$('ansText').textContent=`✓ ${q.opts[q.a]} — ${q.exp}`;$('ansBox').classList.add('show');score.t++;if(i===q.a){btn.classList.add('correct');score.c++;}else{btn.classList.add('wrong');document.querySelectorAll('.choice')[q.a].classList.add('reveal');score.w++;}updScore();showNextBtn(()=>nextQ(shuffled.ld[part],()=>renderListening(LD_PARTS[part])));});});
+}
+
+function renderLdGap(p,q,qs){
+  const id='ld'+(qIdx%qs.length);
+  const gapsHTML=q.gaps.map((g,i)=>{
+    const parts=g.sentence.split('_____');
+    return `<div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;background:#f8f6f0;border-radius:9px;padding:8px 12px;border:1.5px solid var(--border);font-size:14px;line-height:1.9">
+      <span>${parts[0]}</span>
+      <input class="gap-in" id="g${i}" placeholder="?" autocomplete="off" spellcheck="false">
+      <span>${parts[1]||''}</span>
+    </div>`;
+  }).join('');
+  $('cardBody').innerHTML=`
+    ${audioPlayer(q.title,q.text,id)}
+    <div class="task-tag">Gap Fill — listen and complete</div>
+    <div style="display:grid;gap:7px">${gapsHTML}</div>
+    <div class="ans-box" id="ansBox"><div class="ans-lbl">Answers</div><div id="ansText"></div></div>
+    <button onclick="showTr('${id}')" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11.5px;color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif">📄 Transcript</button>
+    <div class="transcript-box" id="tr-${id}" style="display:none">${q.text}</div>`;
+  $('cardFoot').innerHTML='';
+  const chk=mkBtn('btn-check','Check answers ✓',()=>{
+    let correct=0;
+    const html=q.gaps.map((g,i)=>{
+      const val=(document.getElementById('g'+i)?.value||'').trim().toLowerCase();
+      const ok=g.answer.toLowerCase().split('/').map(s=>s.trim()).some(s=>val===s||val.replace(/[^a-z0-9]/g,'')=== s.replace(/[^a-z0-9]/g,''));
+      const inp=document.getElementById('g'+i);if(inp){inp.classList.add(ok?'ok':'err');inp.disabled=true;}
+      if(ok)correct++;
+      return `<div style="font-size:12.5px;margin:2px 0">${ok?'✅':'❌'} <strong>${g.answer}</strong></div>`;
+    }).join('');
+    $('ansText').innerHTML=html;$('ansBox').classList.add('show');
+    score.c+=correct;score.w+=q.gaps.length-correct;score.t++;updScore();chk.disabled=true;
+    showNextBtn(()=>nextQ(shuffled.ld[part],()=>renderListening(LD_PARTS[part])));
+  },p.color);
+  $('cardFoot').appendChild(chk);
+}
+
+function renderLdTF(p,q,qs){
+  const id='ld'+(qIdx%qs.length);
+  window._tfAnswered=0;window._tfTotal=q.statements.length;
+  const stmtsHTML=q.statements.map((st,i)=>`
+    <div class="tf-item" id="tfi${i}">
+      <div class="tf-stmt">${i+1}. ${st.s}</div>
+      <div class="tf-btns">
+        <button class="tf-btn t-style" onclick="answerTF(${i},'T','${st.a.replace(/'/g,"\\'")}','${st.exp.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">✅ True</button>
+        <button class="tf-btn f-style" onclick="answerTF(${i},'F','${st.a.replace(/'/g,"\\'")}','${st.exp.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">❌ False</button>
+        <button class="tf-btn nm-style" onclick="answerTF(${i},'NM','${st.a.replace(/'/g,"\\'")}','${st.exp.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">❓ NM</button>
+      </div>
+      <div class="tf-exp" id="tfe${i}"></div>
+    </div>`).join('');
+  $('cardBody').innerHTML=`
+    ${audioPlayer(q.title,q.text,id)}
+    <div class="task-tag">True · False · Not Mentioned — answer all 5</div>
+    <div style="display:grid;gap:8px">${stmtsHTML}</div>
+    <button onclick="showTr('${id}')" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11.5px;color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif">📄 Transcript</button>
+    <div class="transcript-box" id="tr-${id}" style="display:none">${q.text}</div>`;
+  $('cardFoot').innerHTML='';
+}
+
+window.answerTF=function(i,ans,correct,exp){
+  const item=document.getElementById('tfi'+i);
+  const expEl=document.getElementById('tfe'+i);
+  if(!item||item.dataset.done)return;
+  item.dataset.done='1';
+  item.querySelectorAll('button').forEach(b=>b.disabled=true);
+  const ok=ans===correct;
+  item.classList.add(ok?'good':'bad');
+  expEl.innerHTML=`<strong>${correct==='T'?'✅ TRUE':correct==='F'?'❌ FALSE':'❓ NOT MENTIONED'}</strong> — ${exp}`;
+  expEl.classList.add('show');
+  score.t++;if(ok)score.c++;else score.w++;updScore();
+  window._tfAnswered=(window._tfAnswered||0)+1;
+  if(window._tfAnswered>=(window._tfTotal||5))showNextBtn(()=>nextQ(shuffled.ld[part],()=>renderListening(LD_PARTS[part])));
+};
+
+// ── PLAYPHRASE ──
+function ppBtn(phrase){
+  const clean=phrase.replace(/[^\w\s']/g,'').trim();
+  if(!clean||clean.length<3)return '';
+  const url='https://www.playphrase.me/#/search?q='+encodeURIComponent(clean);
+  return `<a href="${url}" target="_blank" rel="noopener" class="pp-link">🎬 Hear <em>"${clean}"</em> in movies</a>`;
+}
+
+// ── VOICES PRELOAD ──
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+}
+
+// ── INIT ──
+selectModule(0);
+</script>
+</body>
+</html>
